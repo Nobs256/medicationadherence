@@ -1,0 +1,371 @@
+@baseUrl = http://localhost/meditrack-api/api/v1
+
+# IMPORTANT: After a successful login, copy the access_token and refresh_token into these variables.
+# The access_token expires quickly, so you'll need to re-login or refresh often.
+@token = YOUR_ACCESS_TOKEN_FROM_LOGIN_RESPONSE
+@refreshToken = YOUR_REFRESH_TOKEN_FROM_LOGIN_RESPONSE
+
+
+### ----------------------------------------------------------------------------------------------------
+### AUTHENTICATION ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+# @name login
+### Login Test
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@meditrack.app",
+    "password": "Admin@1234"
+}
+
+### Refresh Token
+POST {{baseUrl}}/auth/refresh
+Content-Type: application/json
+
+{
+    "refresh_token": "{{refreshToken}}"
+}
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "refresh_token": "{{refreshToken}}"
+}
+
+### Change Password
+POST {{baseUrl}}/auth/change-password
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "old_password": "Admin@1234",
+    "new_password": "NewSecurePassword123"
+}
+
+### ----------------------------------------------------------------------------------------------------
+### HOSPITAL ENDPOINTS (super_admin only)
+### ----------------------------------------------------------------------------------------------------
+
+### List Hospitals
+GET {{baseUrl}}/hospitals
+Authorization: Bearer {{token}}
+
+### Create Hospital
+POST {{baseUrl}}/hospitals
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "New Test Hospital",
+    "address": "123 Test Street",
+    "phone": "+1234567890",
+    "email": "test@hospital.com"
+}
+
+### Get Hospital Details (using seeded Hospital ID 1)
+GET {{baseUrl}}/hospitals/1
+Authorization: Bearer {{token}}
+
+### Update Hospital (using seeded Hospital ID 1)
+PUT {{baseUrl}}/hospitals/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Bishop Stuart University Hospital (Updated)",
+    "address": "Mbarara, Uganda, Updated Address",
+    "phone": "+256 712 999999",
+    "email": "updated@bsu.ac.ug"
+}
+
+### Toggle Hospital Status (using seeded Hospital ID 1)
+POST {{baseUrl}}/hospitals/1/toggle
+Authorization: Bearer {{token}}
+
+### ----------------------------------------------------------------------------------------------------
+### USER MANAGEMENT ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+### List Users (as super_admin, filter by role)
+GET {{baseUrl}}/users?role=doctor&hospital_id=1
+Authorization: Bearer {{token}}
+
+### Create User (as super_admin, creating a new doctor for Hospital 1)
+POST {{baseUrl}}/users
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "full_name": "Dr. Jane Smith",
+    "email": "jane.smith@hospital.com",
+    "role": "doctor",
+    "hospital_id": 1,
+    "phone": "+256 777 123456"
+}
+
+### Get User Profile (using seeded Patient ID 4)
+GET {{baseUrl}}/users/4
+Authorization: Bearer {{token}}
+
+### Update User (using seeded Patient ID 4)
+PUT {{baseUrl}}/users/4
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "full_name": "Jane Patient Updated",
+    "phone": "+256 755 333445",
+    "gender": "female"
+}
+
+### Toggle User Status (using seeded Patient ID 4)
+POST {{baseUrl}}/users/4/toggle
+Authorization: Bearer {{token}}
+
+### Get Own Profile
+GET {{baseUrl}}/profile
+Authorization: Bearer {{token}}
+
+### Update Own Profile
+PUT {{baseUrl}}/profile
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "full_name": "System Admin Updated",
+    "phone": "+1234567890"
+}
+
+### Upload Avatar (for current user)
+# Replace 'path/to/your/avatar.jpg' with an actual image file path
+POST {{baseUrl}}/profile/avatar
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+avatar: < C:\Users\nobs.is.coding\Desktop\medicationadherence\meditrack-api\uploads\test_avatar.jpg
+
+### Assign Patient to Doctor (as hospital_admin, using seeded Patient ID 4 and Doctor ID 3)
+POST {{baseUrl}}/users/4/assign
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "doctor_id": 3
+}
+
+### ----------------------------------------------------------------------------------------------------
+### MEDICATION ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+### List Medications (as doctor, for Hospital 1)
+GET {{baseUrl}}/medications?hospital_id=1
+Authorization: Bearer {{token}}
+
+### Add Medication to Library (as doctor, for Hospital 1)
+POST {{baseUrl}}/medications
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "New Painkiller",
+    "generic_name": "Ibuprofen",
+    "description": "Relieves pain and reduces inflammation.",
+    "category": "analgesic"
+}
+
+### Update Medication (using seeded Medication ID 1)
+PUT {{baseUrl}}/medications/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Metformin (Updated)",
+    "description": "Updated description for Metformin."
+}
+
+### ----------------------------------------------------------------------------------------------------
+### PRESCRIPTION ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+### List Prescriptions (as doctor, for Patient ID 4)
+GET {{baseUrl}}/prescriptions?patient_id=4
+Authorization: Bearer {{token}}
+
+### Create Prescription (as doctor, for Patient ID 4)
+POST {{baseUrl}}/prescriptions
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "patient_id": 4,
+    "diagnosis": "New Diabetes Management",
+    "notes": "Monitor blood sugar closely.",
+    "start_date": "2026-05-17",
+    "end_date": "2026-08-17",
+    "medications": [
+        {
+            "medication_id": 1,
+            "dosage": "500mg",
+            "frequency": "Once daily",
+            "times_of_day": ["09:00"],
+            "with_food": true,
+            "with_water": true,
+            "special_instructions": "Take after breakfast",
+            "duration_days": 90
+        },
+        {
+            "medication_id": 2,
+            "dosage": "10mg",
+            "frequency": "Once daily",
+            "times_of_day": ["21:00"],
+            "with_food": false,
+            "with_water": true,
+            "special_instructions": "Take before bed"
+        }
+    ],
+    "lifestyle_advice": [
+        {
+            "type": "diet",
+            "title": "Reduce Sugar Intake",
+            "description": "Avoid sugary drinks and foods.",
+            "frequency": "Daily"
+        }
+    ]
+}
+
+### Get Prescription Details (using seeded Prescription ID 1)
+GET {{baseUrl}}/prescriptions/1
+Authorization: Bearer {{token}}
+
+### Update Prescription (using seeded Prescription ID 1)
+PUT {{baseUrl}}/prescriptions/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "diagnosis": "Updated Diabetes Management",
+    "notes": "Continue monitoring blood sugar.",
+    "is_active": 1
+}
+
+### Get My Prescriptions (as patient, using patient's token)
+# You'll need to login as 'patient@meditrack.app' and get their token for this.
+GET {{baseUrl}}/my-prescriptions
+Authorization: Bearer YOUR_PATIENT_TOKEN_HERE
+
+### ----------------------------------------------------------------------------------------------------
+### SCHEDULES ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+### Get Today's Schedules (as patient, using patient's token)
+GET {{baseUrl}}/schedules/today
+Authorization: Bearer YOUR_PATIENT_TOKEN_HERE
+
+### Get Schedules in Date Range (as patient, using patient's token)
+GET {{baseUrl}}/schedules?from=2026-05-01&to=2026-05-31
+Authorization: Bearer YOUR_PATIENT_TOKEN_HERE
+
+### Mark Schedule as Taken (using a pending schedule ID from /schedules/today)
+# Replace {id} with an actual pending schedule ID for patient 4
+POST {{baseUrl}}/schedules/PENDING_SCHEDULE_ID/take
+Authorization: Bearer YOUR_PATIENT_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "notes": "Taken with breakfast."
+}
+
+### Mark Schedule as Skipped (using a pending schedule ID from /schedules/today)
+# Replace {id} with an actual pending schedule ID for patient 4
+POST {{baseUrl}}/schedules/ANOTHER_PENDING_SCHEDULE_ID/skip
+Authorization: Bearer YOUR_PATIENT_TOKEN_HERE
+Content-Type: application/json
+
+{
+    "notes": "Felt unwell, skipped dose."
+}
+
+### ----------------------------------------------------------------------------------------------------
+### APPOINTMENTS ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+### List Appointments (as doctor)
+GET {{baseUrl}}/appointments?status=scheduled
+Authorization: Bearer {{token}}
+
+### Create Appointment (as doctor, for Patient ID 4)
+POST {{baseUrl}}/appointments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "patient_id": 4,
+    "appointment_date": "2026-06-01 10:00:00",
+    "purpose": "Follow-up on diabetes management",
+    "notes": "Patient requested morning slot."
+}
+
+### Update Appointment (using seeded Appointment ID 1)
+PUT {{baseUrl}}/appointments/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "appointment_date": "2026-06-02 11:00:00",
+    "purpose": "Rescheduled follow-up",
+    "status": "rescheduled"
+}
+
+### ----------------------------------------------------------------------------------------------------
+### NOTIFICATIONS ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+### List Notifications (as super_admin)
+GET {{baseUrl}}/notifications
+Authorization: Bearer {{token}}
+
+### Mark One Notification as Read (replace {id} with an actual notification ID)
+POST {{baseUrl}}/notifications/NOTIFICATION_ID/read
+Authorization: Bearer {{token}}
+
+### Mark All Notifications as Read
+POST {{baseUrl}}/notifications/read-all
+Authorization: Bearer {{token}}
+
+### Get Unread Notification Count
+GET {{baseUrl}}/notifications/unread-count
+Authorization: Bearer {{token}}
+
+### Update OneSignal Player ID (for current user)
+PUT {{baseUrl}}/users/onesignal-id
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "onesignal_player_id": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+}
+
+### ----------------------------------------------------------------------------------------------------
+### ADHERENCE ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+### Get Adherence Logs (as doctor, for Patient ID 4)
+GET {{baseUrl}}/adherence?patient_id=4&from=2026-05-01&to=2026-05-31
+Authorization: Bearer {{token}}
+
+### Get Adherence Summary (as doctor, for Patient ID 4)
+GET {{baseUrl}}/adherence/summary?patient_id=4
+Authorization: Bearer {{token}}
+
+### ----------------------------------------------------------------------------------------------------
+### DASHBOARD ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+### Get Dashboard Stats (as super_admin)
+GET {{baseUrl}}/dashboard
+Authorization: Bearer {{token}}

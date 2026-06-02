@@ -1,0 +1,19 @@
+{
+    "name": "nobs.is.coding/meditrack-api",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-4": {
+            "NobsIsCoding\\MeditrackApi\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "owomugisha nobert",
+            "email": "owomugishanobert21@gmail.com"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "6.10",
+        "vlucas/phpdotenv": "5.6"
+    }
+}
