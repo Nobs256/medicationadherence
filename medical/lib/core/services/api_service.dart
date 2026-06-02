@@ -13,7 +13,7 @@ class ApiService {
   late final Dio _dio;
 
   // Replace with your local IP or production domain
-  static const baseUrl = 'https://music.onlineincomehub.org/meditrack-api/api/v1';
+  static const baseUrl = 'https://meditrack-api/api/v1';
 
   ApiService(this._storage) {
     _dio = Dio(
