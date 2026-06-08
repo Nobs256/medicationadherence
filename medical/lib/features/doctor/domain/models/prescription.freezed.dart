@@ -21,6 +21,7 @@ Prescription _$PrescriptionFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Prescription {
+  @JsonKey(fromJson: _intFromJson)
   int get id => throw _privateConstructorUsedError;
   String get diagnosis => throw _privateConstructorUsedError;
   String? get notes => throw _privateConstructorUsedError;
@@ -34,9 +35,9 @@ mixin _$Prescription {
   String get doctorName => throw _privateConstructorUsedError;
   @JsonKey(name: 'patient_name')
   String? get patientName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'medication_count')
+  @JsonKey(name: 'medication_count', fromJson: _intFromDynamic)
   int? get medicationCount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'advice_count')
+  @JsonKey(name: 'advice_count', fromJson: _intFromDynamic)
   int? get adviceCount => throw _privateConstructorUsedError;
   List<PrescriptionMedication>? get medications =>
       throw _privateConstructorUsedError;
@@ -62,7 +63,7 @@ abstract class $PrescriptionCopyWith<$Res> {
   ) = _$PrescriptionCopyWithImpl<$Res, Prescription>;
   @useResult
   $Res call({
-    int id,
+    @JsonKey(fromJson: _intFromJson) int id,
     String diagnosis,
     String? notes,
     @JsonKey(name: 'start_date') String startDate,
@@ -70,8 +71,9 @@ abstract class $PrescriptionCopyWith<$Res> {
     @JsonKey(name: 'is_active', fromJson: _boolFromInt) bool isActive,
     @JsonKey(name: 'doctor_name') String doctorName,
     @JsonKey(name: 'patient_name') String? patientName,
-    @JsonKey(name: 'medication_count') int? medicationCount,
-    @JsonKey(name: 'advice_count') int? adviceCount,
+    @JsonKey(name: 'medication_count', fromJson: _intFromDynamic)
+    int? medicationCount,
+    @JsonKey(name: 'advice_count', fromJson: _intFromDynamic) int? adviceCount,
     List<PrescriptionMedication>? medications,
     @JsonKey(name: 'lifestyle_advice') List<LifestyleAdvice>? lifestyleAdvice,
   });
@@ -183,7 +185,7 @@ abstract class _$$PrescriptionImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int id,
+    @JsonKey(fromJson: _intFromJson) int id,
     String diagnosis,
     String? notes,
     @JsonKey(name: 'start_date') String startDate,
@@ -191,8 +193,9 @@ abstract class _$$PrescriptionImplCopyWith<$Res>
     @JsonKey(name: 'is_active', fromJson: _boolFromInt) bool isActive,
     @JsonKey(name: 'doctor_name') String doctorName,
     @JsonKey(name: 'patient_name') String? patientName,
-    @JsonKey(name: 'medication_count') int? medicationCount,
-    @JsonKey(name: 'advice_count') int? adviceCount,
+    @JsonKey(name: 'medication_count', fromJson: _intFromDynamic)
+    int? medicationCount,
+    @JsonKey(name: 'advice_count', fromJson: _intFromDynamic) int? adviceCount,
     List<PrescriptionMedication>? medications,
     @JsonKey(name: 'lifestyle_advice') List<LifestyleAdvice>? lifestyleAdvice,
   });
@@ -296,7 +299,7 @@ class __$$PrescriptionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PrescriptionImpl implements _Prescription {
   const _$PrescriptionImpl({
-    required this.id,
+    @JsonKey(fromJson: _intFromJson) required this.id,
     required this.diagnosis,
     this.notes,
     @JsonKey(name: 'start_date') required this.startDate,
@@ -304,8 +307,9 @@ class _$PrescriptionImpl implements _Prescription {
     @JsonKey(name: 'is_active', fromJson: _boolFromInt) required this.isActive,
     @JsonKey(name: 'doctor_name') required this.doctorName,
     @JsonKey(name: 'patient_name') this.patientName,
-    @JsonKey(name: 'medication_count') this.medicationCount,
-    @JsonKey(name: 'advice_count') this.adviceCount,
+    @JsonKey(name: 'medication_count', fromJson: _intFromDynamic)
+    this.medicationCount,
+    @JsonKey(name: 'advice_count', fromJson: _intFromDynamic) this.adviceCount,
     final List<PrescriptionMedication>? medications,
     @JsonKey(name: 'lifestyle_advice')
     final List<LifestyleAdvice>? lifestyleAdvice,
@@ -316,6 +320,7 @@ class _$PrescriptionImpl implements _Prescription {
       _$$PrescriptionImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   final int id;
   @override
   final String diagnosis;
@@ -337,10 +342,10 @@ class _$PrescriptionImpl implements _Prescription {
   @JsonKey(name: 'patient_name')
   final String? patientName;
   @override
-  @JsonKey(name: 'medication_count')
+  @JsonKey(name: 'medication_count', fromJson: _intFromDynamic)
   final int? medicationCount;
   @override
-  @JsonKey(name: 'advice_count')
+  @JsonKey(name: 'advice_count', fromJson: _intFromDynamic)
   final int? adviceCount;
   final List<PrescriptionMedication>? _medications;
   @override
@@ -434,7 +439,7 @@ class _$PrescriptionImpl implements _Prescription {
 
 abstract class _Prescription implements Prescription {
   const factory _Prescription({
-    required final int id,
+    @JsonKey(fromJson: _intFromJson) required final int id,
     required final String diagnosis,
     final String? notes,
     @JsonKey(name: 'start_date') required final String startDate,
@@ -443,8 +448,10 @@ abstract class _Prescription implements Prescription {
     required final bool isActive,
     @JsonKey(name: 'doctor_name') required final String doctorName,
     @JsonKey(name: 'patient_name') final String? patientName,
-    @JsonKey(name: 'medication_count') final int? medicationCount,
-    @JsonKey(name: 'advice_count') final int? adviceCount,
+    @JsonKey(name: 'medication_count', fromJson: _intFromDynamic)
+    final int? medicationCount,
+    @JsonKey(name: 'advice_count', fromJson: _intFromDynamic)
+    final int? adviceCount,
     final List<PrescriptionMedication>? medications,
     @JsonKey(name: 'lifestyle_advice')
     final List<LifestyleAdvice>? lifestyleAdvice,
@@ -454,6 +461,7 @@ abstract class _Prescription implements Prescription {
       _$PrescriptionImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   int get id;
   @override
   String get diagnosis;
@@ -475,10 +483,10 @@ abstract class _Prescription implements Prescription {
   @JsonKey(name: 'patient_name')
   String? get patientName;
   @override
-  @JsonKey(name: 'medication_count')
+  @JsonKey(name: 'medication_count', fromJson: _intFromDynamic)
   int? get medicationCount;
   @override
-  @JsonKey(name: 'advice_count')
+  @JsonKey(name: 'advice_count', fromJson: _intFromDynamic)
   int? get adviceCount;
   @override
   List<PrescriptionMedication>? get medications;

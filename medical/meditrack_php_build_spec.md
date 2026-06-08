@@ -2859,19 +2859,19 @@ Create all models in `lib/features/[feature]/domain/models/`. Run `dart run buil
 class UserProfile with _$UserProfile {
   const factory UserProfile({
     required int id,
-    required String fullName,
+    @JsonKey(name: 'full_name') required String fullName,
     required String email,
     String? phone,
-    required String roleName,
-    int? hospitalId,
-    String? hospitalName,
-    String? hospitalLogo,
-    String? avatarUrl,
-    String? dateOfBirth,
+    @JsonKey(name: 'role_name') required String roleName,
+    @JsonKey(name: 'hospital_id') int? hospitalId,
+    @JsonKey(name: 'hospital_name') String? hospitalName,
+    @JsonKey(name: 'hospital_logo') String? hospitalLogo,
+    @JsonKey(name: 'avatar_url') String? avatarUrl,
+    @JsonKey(name: 'date_of_birth') String? dateOfBirth,
     String? gender,
-    String? emergencyContact,
+    @JsonKey(name: 'emergency_contact') String? emergencyContact,
     String? diagnosis,
-    required bool isActive,
+    @JsonKey(name: 'is_active') required bool isActive,
   }) = _UserProfile;
   factory UserProfile.fromJson(Map<String, dynamic> json) => _$UserProfileFromJson(json);
 }
@@ -2885,11 +2885,11 @@ class Hospital with _$Hospital {
     String? address,
     String? phone,
     String? email,
-    String? logoUrl,
-    required bool isActive,
-    int? doctorCount,
-    int? patientCount,
-    double? avgAdherence,
+    @JsonKey(name: 'logo_url') String? logoUrl,
+    @JsonKey(name: 'is_active') required bool isActive,
+    @JsonKey(name: 'doctor_count') int? doctorCount,
+    @JsonKey(name: 'patient_count') int? patientCount,
+    @JsonKey(name: 'avg_adherence') double? avgAdherence,
   }) = _Hospital;
   factory Hospital.fromJson(Map<String, dynamic> json) => _$HospitalFromJson(json);
 }
@@ -2901,13 +2901,13 @@ class Prescription with _$Prescription {
     required int id,
     required String diagnosis,
     String? notes,
-    required String startDate,
-    String? endDate,
-    required bool isActive,
-    required String doctorName,
-    String? patientName,
-    int? medicationCount,
-    int? adviceCount,
+    @JsonKey(name: 'start_date') required String startDate,
+    @JsonKey(name: 'end_date') String? endDate,
+    @JsonKey(name: 'is_active') required bool isActive,
+    @JsonKey(name: 'doctor_name') required String doctorName,
+    @JsonKey(name: 'patient_name') String? patientName,
+    @JsonKey(name: 'medication_count') int? medicationCount,
+    @JsonKey(name: 'advice_count') int? adviceCount,
     List<PrescriptionMedication>? medications,
     List<LifestyleAdvice>? lifestyleAdvice,
   }) = _Prescription;
@@ -2919,19 +2919,19 @@ class Prescription with _$Prescription {
 class PrescriptionMedication with _$PrescriptionMedication {
   const factory PrescriptionMedication({
     required int id,
-    required int medicationId,
-    required String medicationName,
-    String? genericName,
+    @JsonKey(name: 'medication_id') required int medicationId,
+    @JsonKey(name: 'medication_name') required String medicationName,
+    @JsonKey(name: 'generic_name') String? genericName,
     String? category,
-    String? medicationDescription,
-    String? imageUrl,
+    @JsonKey(name: 'medication_description') String? medicationDescription,
+    @JsonKey(name: 'image_url') String? imageUrl,
     required String dosage,
     required String frequency,
-    required List<String> timesOfDay,
-    required bool withFood,
-    required bool withWater,
-    String? specialInstructions,
-    int? durationDays,
+    @JsonKey(name: 'times_of_day') required List<String> timesOfDay,
+    @JsonKey(name: 'with_food') required bool withFood,
+    @JsonKey(name: 'with_water') required bool withWater,
+    @JsonKey(name: 'special_instructions') String? specialInstructions,
+    @JsonKey(name: 'duration_days') int? durationDays,
   }) = _PrescriptionMedication;
   factory PrescriptionMedication.fromJson(Map<String, dynamic> json) => _$PrescriptionMedicationFromJson(json);
 }
@@ -2941,12 +2941,12 @@ class PrescriptionMedication with _$PrescriptionMedication {
 class LifestyleAdvice with _$LifestyleAdvice {
   const factory LifestyleAdvice({
     required int id,
-    required int prescriptionId,
-    required String adviceType,  // exercise, diet, hydration, sleep, general
+    @JsonKey(name: 'prescription_id') required int prescriptionId,
+    @JsonKey(name: 'advice_type') required String adviceType,  // exercise, diet, hydration, sleep, general
     required String title,
     required String description,
     String? frequency,
-    int? durationMinutes,
+    @JsonKey(name: 'duration_minutes') int? durationMinutes,
   }) = _LifestyleAdvice;
   factory LifestyleAdvice.fromJson(Map<String, dynamic> json) => _$LifestyleAdviceFromJson(json);
 }
@@ -2956,20 +2956,20 @@ class LifestyleAdvice with _$LifestyleAdvice {
 class MedicationSchedule with _$MedicationSchedule {
   const factory MedicationSchedule({
     required int id,
-    required String scheduledTime,
+    @JsonKey(name: 'scheduled_time') required String scheduledTime,
     required String status,        // pending, taken, missed, skipped
-    String? confirmedAt,
+    @JsonKey(name: 'confirmed_at') String? confirmedAt,
     String? notes,
     required String dosage,
-    required String medicationName,
-    String? imageUrl,
-    required bool withFood,
-    required bool withWater,
-    String? specialInstructions,
-    String? prescriptionId,
-    String? doctorName,
+    @JsonKey(name: 'medication_name') required String medicationName,
+    @JsonKey(name: 'image_url') String? imageUrl,
+    @JsonKey(name: 'with_food') required bool withFood,
+    @JsonKey(name: 'with_water') required bool withWater,
+    @JsonKey(name: 'special_instructions') String? specialInstructions,
+    @JsonKey(name: 'prescription_id') String? prescriptionId,
+    @JsonKey(name: 'doctor_name') String? doctorName,
     String? diagnosis,
-    List<Map<String, String>>? lifestyleTips,
+    @JsonKey(name: 'lifestyle_tips') List<Map<String, String>>? lifestyleTips,
   }) = _MedicationSchedule;
   factory MedicationSchedule.fromJson(Map<String, dynamic> json) => _$MedicationScheduleFromJson(json);
 }
@@ -2979,14 +2979,14 @@ class MedicationSchedule with _$MedicationSchedule {
 class AppointmentModel with _$AppointmentModel {
   const factory AppointmentModel({
     required int id,
-    required String appointmentDate,
+    @JsonKey(name: 'appointment_date') required String appointmentDate,
     required String purpose,
     String? notes,
     required String status,
-    String? patientName,
-    String? patientAvatar,
-    String? doctorName,
-    String? hospitalName,
+    @JsonKey(name: 'patient_name') String? patientName,
+    @JsonKey(name: 'patient_avatar') String? patientAvatar,
+    @JsonKey(name: 'doctor_name') String? doctorName,
+    @JsonKey(name: 'hospital_name') String? hospitalName,
   }) = _AppointmentModel;
   factory AppointmentModel.fromJson(Map<String, dynamic> json) => _$AppointmentModelFromJson(json);
 }
@@ -2999,12 +2999,12 @@ class AppNotification with _$AppNotification {
     required String title,
     required String body,
     required String type,
-    int? referenceId,
-    String? referenceTable,
-    required bool isRead,
-    required String sentAt,
-    String? readAt,
-    String? senderName,
+    @JsonKey(name: 'reference_id') int? referenceId,
+    @JsonKey(name: 'reference_table') String? referenceTable,
+    @JsonKey(name: 'is_read') required bool isRead,
+    @JsonKey(name: 'sent_at') required String sentAt,
+    @JsonKey(name: 'read_at') String? readAt,
+    @JsonKey(name: 'sender_name') String? senderName,
   }) = _AppNotification;
   factory AppNotification.fromJson(Map<String, dynamic> json) => _$AppNotificationFromJson(json);
 }
@@ -3013,12 +3013,12 @@ class AppNotification with _$AppNotification {
 @freezed
 class AdherenceLog with _$AdherenceLog {
   const factory AdherenceLog({
-    required String logDate,
-    required int totalScheduled,
-    required int totalTaken,
-    required int totalMissed,
-    required int totalSkipped,
-    required double adherencePercentage,
+    @JsonKey(name: 'log_date') required String logDate,
+    @JsonKey(name: 'total_scheduled') required int totalScheduled,
+    @JsonKey(name: 'total_taken') required int totalTaken,
+    @JsonKey(name: 'total_missed') required int totalMissed,
+    @JsonKey(name: 'total_skipped') required int totalSkipped,
+    @JsonKey(name: 'adherence_percentage') required double adherencePercentage,
   }) = _AdherenceLog;
   factory AdherenceLog.fromJson(Map<String, dynamic> json) => _$AdherenceLogFromJson(json);
 }

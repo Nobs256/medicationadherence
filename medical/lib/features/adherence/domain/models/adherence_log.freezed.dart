@@ -23,13 +23,13 @@ AdherenceLog _$AdherenceLogFromJson(Map<String, dynamic> json) {
 mixin _$AdherenceLog {
   @JsonKey(name: 'log_date')
   String get logDate => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_scheduled')
+  @JsonKey(name: 'total_scheduled', fromJson: _intFromJson)
   int get totalScheduled => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_taken')
+  @JsonKey(name: 'total_taken', fromJson: _intFromJson)
   int get totalTaken => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_missed')
+  @JsonKey(name: 'total_missed', fromJson: _intFromJson)
   int get totalMissed => throw _privateConstructorUsedError;
-  @JsonKey(name: 'total_skipped')
+  @JsonKey(name: 'total_skipped', fromJson: _intFromJson)
   int get totalSkipped => throw _privateConstructorUsedError;
   @JsonKey(name: 'adherence_percentage', fromJson: _doubleFromDynamic)
   double get adherencePercentage => throw _privateConstructorUsedError;
@@ -53,10 +53,11 @@ abstract class $AdherenceLogCopyWith<$Res> {
   @useResult
   $Res call({
     @JsonKey(name: 'log_date') String logDate,
-    @JsonKey(name: 'total_scheduled') int totalScheduled,
-    @JsonKey(name: 'total_taken') int totalTaken,
-    @JsonKey(name: 'total_missed') int totalMissed,
-    @JsonKey(name: 'total_skipped') int totalSkipped,
+    @JsonKey(name: 'total_scheduled', fromJson: _intFromJson)
+    int totalScheduled,
+    @JsonKey(name: 'total_taken', fromJson: _intFromJson) int totalTaken,
+    @JsonKey(name: 'total_missed', fromJson: _intFromJson) int totalMissed,
+    @JsonKey(name: 'total_skipped', fromJson: _intFromJson) int totalSkipped,
     @JsonKey(name: 'adherence_percentage', fromJson: _doubleFromDynamic)
     double adherencePercentage,
   });
@@ -133,10 +134,11 @@ abstract class _$$AdherenceLogImplCopyWith<$Res>
   @useResult
   $Res call({
     @JsonKey(name: 'log_date') String logDate,
-    @JsonKey(name: 'total_scheduled') int totalScheduled,
-    @JsonKey(name: 'total_taken') int totalTaken,
-    @JsonKey(name: 'total_missed') int totalMissed,
-    @JsonKey(name: 'total_skipped') int totalSkipped,
+    @JsonKey(name: 'total_scheduled', fromJson: _intFromJson)
+    int totalScheduled,
+    @JsonKey(name: 'total_taken', fromJson: _intFromJson) int totalTaken,
+    @JsonKey(name: 'total_missed', fromJson: _intFromJson) int totalMissed,
+    @JsonKey(name: 'total_skipped', fromJson: _intFromJson) int totalSkipped,
     @JsonKey(name: 'adherence_percentage', fromJson: _doubleFromDynamic)
     double adherencePercentage,
   });
@@ -205,10 +207,14 @@ class __$$AdherenceLogImplCopyWithImpl<$Res>
 class _$AdherenceLogImpl implements _AdherenceLog {
   const _$AdherenceLogImpl({
     @JsonKey(name: 'log_date') required this.logDate,
-    @JsonKey(name: 'total_scheduled') required this.totalScheduled,
-    @JsonKey(name: 'total_taken') required this.totalTaken,
-    @JsonKey(name: 'total_missed') required this.totalMissed,
-    @JsonKey(name: 'total_skipped') required this.totalSkipped,
+    @JsonKey(name: 'total_scheduled', fromJson: _intFromJson)
+    required this.totalScheduled,
+    @JsonKey(name: 'total_taken', fromJson: _intFromJson)
+    required this.totalTaken,
+    @JsonKey(name: 'total_missed', fromJson: _intFromJson)
+    required this.totalMissed,
+    @JsonKey(name: 'total_skipped', fromJson: _intFromJson)
+    required this.totalSkipped,
     @JsonKey(name: 'adherence_percentage', fromJson: _doubleFromDynamic)
     required this.adherencePercentage,
   });
@@ -220,16 +226,16 @@ class _$AdherenceLogImpl implements _AdherenceLog {
   @JsonKey(name: 'log_date')
   final String logDate;
   @override
-  @JsonKey(name: 'total_scheduled')
+  @JsonKey(name: 'total_scheduled', fromJson: _intFromJson)
   final int totalScheduled;
   @override
-  @JsonKey(name: 'total_taken')
+  @JsonKey(name: 'total_taken', fromJson: _intFromJson)
   final int totalTaken;
   @override
-  @JsonKey(name: 'total_missed')
+  @JsonKey(name: 'total_missed', fromJson: _intFromJson)
   final int totalMissed;
   @override
-  @JsonKey(name: 'total_skipped')
+  @JsonKey(name: 'total_skipped', fromJson: _intFromJson)
   final int totalSkipped;
   @override
   @JsonKey(name: 'adherence_percentage', fromJson: _doubleFromDynamic)
@@ -287,10 +293,14 @@ class _$AdherenceLogImpl implements _AdherenceLog {
 abstract class _AdherenceLog implements AdherenceLog {
   const factory _AdherenceLog({
     @JsonKey(name: 'log_date') required final String logDate,
-    @JsonKey(name: 'total_scheduled') required final int totalScheduled,
-    @JsonKey(name: 'total_taken') required final int totalTaken,
-    @JsonKey(name: 'total_missed') required final int totalMissed,
-    @JsonKey(name: 'total_skipped') required final int totalSkipped,
+    @JsonKey(name: 'total_scheduled', fromJson: _intFromJson)
+    required final int totalScheduled,
+    @JsonKey(name: 'total_taken', fromJson: _intFromJson)
+    required final int totalTaken,
+    @JsonKey(name: 'total_missed', fromJson: _intFromJson)
+    required final int totalMissed,
+    @JsonKey(name: 'total_skipped', fromJson: _intFromJson)
+    required final int totalSkipped,
     @JsonKey(name: 'adherence_percentage', fromJson: _doubleFromDynamic)
     required final double adherencePercentage,
   }) = _$AdherenceLogImpl;
@@ -302,16 +312,16 @@ abstract class _AdherenceLog implements AdherenceLog {
   @JsonKey(name: 'log_date')
   String get logDate;
   @override
-  @JsonKey(name: 'total_scheduled')
+  @JsonKey(name: 'total_scheduled', fromJson: _intFromJson)
   int get totalScheduled;
   @override
-  @JsonKey(name: 'total_taken')
+  @JsonKey(name: 'total_taken', fromJson: _intFromJson)
   int get totalTaken;
   @override
-  @JsonKey(name: 'total_missed')
+  @JsonKey(name: 'total_missed', fromJson: _intFromJson)
   int get totalMissed;
   @override
-  @JsonKey(name: 'total_skipped')
+  @JsonKey(name: 'total_skipped', fromJson: _intFromJson)
   int get totalSkipped;
   @override
   @JsonKey(name: 'adherence_percentage', fromJson: _doubleFromDynamic)

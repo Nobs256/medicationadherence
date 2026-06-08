@@ -8,8 +8,8 @@ part of 'medication.dart';
 
 _$MedicationImpl _$$MedicationImplFromJson(Map<String, dynamic> json) =>
     _$MedicationImpl(
-      id: (json['id'] as num).toInt(),
-      hospitalId: (json['hospital_id'] as num?)?.toInt(),
+      id: _intFromJson(json['id']),
+      hospitalId: _intFromDynamic(json['hospital_id']),
       name: json['name'] as String,
       genericName: json['generic_name'] as String?,
       description: json['description'] as String?,

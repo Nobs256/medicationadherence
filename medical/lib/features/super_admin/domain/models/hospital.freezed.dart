@@ -21,6 +21,7 @@ Hospital _$HospitalFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Hospital {
+  @JsonKey(fromJson: _intFromJson)
   int get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   String? get address => throw _privateConstructorUsedError;
@@ -30,9 +31,9 @@ mixin _$Hospital {
   String? get logoUrl => throw _privateConstructorUsedError;
   @JsonKey(name: 'is_active', fromJson: _boolFromInt)
   bool get isActive => throw _privateConstructorUsedError;
-  @JsonKey(name: 'doctor_count')
+  @JsonKey(name: 'doctor_count', fromJson: _intFromDynamic)
   int? get doctorCount => throw _privateConstructorUsedError;
-  @JsonKey(name: 'patient_count')
+  @JsonKey(name: 'patient_count', fromJson: _intFromDynamic)
   int? get patientCount => throw _privateConstructorUsedError;
   @JsonKey(name: 'avg_adherence', fromJson: _doubleFromDynamic)
   double? get avgAdherence => throw _privateConstructorUsedError;
@@ -53,15 +54,16 @@ abstract class $HospitalCopyWith<$Res> {
       _$HospitalCopyWithImpl<$Res, Hospital>;
   @useResult
   $Res call({
-    int id,
+    @JsonKey(fromJson: _intFromJson) int id,
     String name,
     String? address,
     String? phone,
     String? email,
     @JsonKey(name: 'logo_url') String? logoUrl,
     @JsonKey(name: 'is_active', fromJson: _boolFromInt) bool isActive,
-    @JsonKey(name: 'doctor_count') int? doctorCount,
-    @JsonKey(name: 'patient_count') int? patientCount,
+    @JsonKey(name: 'doctor_count', fromJson: _intFromDynamic) int? doctorCount,
+    @JsonKey(name: 'patient_count', fromJson: _intFromDynamic)
+    int? patientCount,
     @JsonKey(name: 'avg_adherence', fromJson: _doubleFromDynamic)
     double? avgAdherence,
   });
@@ -161,15 +163,16 @@ abstract class _$$HospitalImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int id,
+    @JsonKey(fromJson: _intFromJson) int id,
     String name,
     String? address,
     String? phone,
     String? email,
     @JsonKey(name: 'logo_url') String? logoUrl,
     @JsonKey(name: 'is_active', fromJson: _boolFromInt) bool isActive,
-    @JsonKey(name: 'doctor_count') int? doctorCount,
-    @JsonKey(name: 'patient_count') int? patientCount,
+    @JsonKey(name: 'doctor_count', fromJson: _intFromDynamic) int? doctorCount,
+    @JsonKey(name: 'patient_count', fromJson: _intFromDynamic)
+    int? patientCount,
     @JsonKey(name: 'avg_adherence', fromJson: _doubleFromDynamic)
     double? avgAdherence,
   });
@@ -261,15 +264,16 @@ class __$$HospitalImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$HospitalImpl implements _Hospital {
   const _$HospitalImpl({
-    required this.id,
+    @JsonKey(fromJson: _intFromJson) required this.id,
     required this.name,
     this.address,
     this.phone,
     this.email,
     @JsonKey(name: 'logo_url') this.logoUrl,
     @JsonKey(name: 'is_active', fromJson: _boolFromInt) required this.isActive,
-    @JsonKey(name: 'doctor_count') this.doctorCount,
-    @JsonKey(name: 'patient_count') this.patientCount,
+    @JsonKey(name: 'doctor_count', fromJson: _intFromDynamic) this.doctorCount,
+    @JsonKey(name: 'patient_count', fromJson: _intFromDynamic)
+    this.patientCount,
     @JsonKey(name: 'avg_adherence', fromJson: _doubleFromDynamic)
     this.avgAdherence,
   });
@@ -278,6 +282,7 @@ class _$HospitalImpl implements _Hospital {
       _$$HospitalImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   final int id;
   @override
   final String name;
@@ -294,10 +299,10 @@ class _$HospitalImpl implements _Hospital {
   @JsonKey(name: 'is_active', fromJson: _boolFromInt)
   final bool isActive;
   @override
-  @JsonKey(name: 'doctor_count')
+  @JsonKey(name: 'doctor_count', fromJson: _intFromDynamic)
   final int? doctorCount;
   @override
-  @JsonKey(name: 'patient_count')
+  @JsonKey(name: 'patient_count', fromJson: _intFromDynamic)
   final int? patientCount;
   @override
   @JsonKey(name: 'avg_adherence', fromJson: _doubleFromDynamic)
@@ -361,7 +366,7 @@ class _$HospitalImpl implements _Hospital {
 
 abstract class _Hospital implements Hospital {
   const factory _Hospital({
-    required final int id,
+    @JsonKey(fromJson: _intFromJson) required final int id,
     required final String name,
     final String? address,
     final String? phone,
@@ -369,8 +374,10 @@ abstract class _Hospital implements Hospital {
     @JsonKey(name: 'logo_url') final String? logoUrl,
     @JsonKey(name: 'is_active', fromJson: _boolFromInt)
     required final bool isActive,
-    @JsonKey(name: 'doctor_count') final int? doctorCount,
-    @JsonKey(name: 'patient_count') final int? patientCount,
+    @JsonKey(name: 'doctor_count', fromJson: _intFromDynamic)
+    final int? doctorCount,
+    @JsonKey(name: 'patient_count', fromJson: _intFromDynamic)
+    final int? patientCount,
     @JsonKey(name: 'avg_adherence', fromJson: _doubleFromDynamic)
     final double? avgAdherence,
   }) = _$HospitalImpl;
@@ -379,6 +386,7 @@ abstract class _Hospital implements Hospital {
       _$HospitalImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   int get id;
   @override
   String get name;
@@ -395,10 +403,10 @@ abstract class _Hospital implements Hospital {
   @JsonKey(name: 'is_active', fromJson: _boolFromInt)
   bool get isActive;
   @override
-  @JsonKey(name: 'doctor_count')
+  @JsonKey(name: 'doctor_count', fromJson: _intFromDynamic)
   int? get doctorCount;
   @override
-  @JsonKey(name: 'patient_count')
+  @JsonKey(name: 'patient_count', fromJson: _intFromDynamic)
   int? get patientCount;
   @override
   @JsonKey(name: 'avg_adherence', fromJson: _doubleFromDynamic)

@@ -21,8 +21,9 @@ Medication _$MedicationFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$Medication {
+  @JsonKey(fromJson: _intFromJson)
   int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'hospital_id')
+  @JsonKey(name: 'hospital_id', fromJson: _intFromDynamic)
   int? get hospitalId => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
   @JsonKey(name: 'generic_name')
@@ -52,8 +53,8 @@ abstract class $MedicationCopyWith<$Res> {
   ) = _$MedicationCopyWithImpl<$Res, Medication>;
   @useResult
   $Res call({
-    int id,
-    @JsonKey(name: 'hospital_id') int? hospitalId,
+    @JsonKey(fromJson: _intFromJson) int id,
+    @JsonKey(name: 'hospital_id', fromJson: _intFromDynamic) int? hospitalId,
     String name,
     @JsonKey(name: 'generic_name') String? genericName,
     String? description,
@@ -145,8 +146,8 @@ abstract class _$$MedicationImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int id,
-    @JsonKey(name: 'hospital_id') int? hospitalId,
+    @JsonKey(fromJson: _intFromJson) int id,
+    @JsonKey(name: 'hospital_id', fromJson: _intFromDynamic) int? hospitalId,
     String name,
     @JsonKey(name: 'generic_name') String? genericName,
     String? description,
@@ -230,8 +231,8 @@ class __$$MedicationImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MedicationImpl implements _Medication {
   const _$MedicationImpl({
-    required this.id,
-    @JsonKey(name: 'hospital_id') this.hospitalId,
+    @JsonKey(fromJson: _intFromJson) required this.id,
+    @JsonKey(name: 'hospital_id', fromJson: _intFromDynamic) this.hospitalId,
     required this.name,
     @JsonKey(name: 'generic_name') this.genericName,
     this.description,
@@ -244,9 +245,10 @@ class _$MedicationImpl implements _Medication {
       _$$MedicationImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   final int id;
   @override
-  @JsonKey(name: 'hospital_id')
+  @JsonKey(name: 'hospital_id', fromJson: _intFromDynamic)
   final int? hospitalId;
   @override
   final String name;
@@ -320,8 +322,9 @@ class _$MedicationImpl implements _Medication {
 
 abstract class _Medication implements Medication {
   const factory _Medication({
-    required final int id,
-    @JsonKey(name: 'hospital_id') final int? hospitalId,
+    @JsonKey(fromJson: _intFromJson) required final int id,
+    @JsonKey(name: 'hospital_id', fromJson: _intFromDynamic)
+    final int? hospitalId,
     required final String name,
     @JsonKey(name: 'generic_name') final String? genericName,
     final String? description,
@@ -334,9 +337,10 @@ abstract class _Medication implements Medication {
       _$MedicationImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   int get id;
   @override
-  @JsonKey(name: 'hospital_id')
+  @JsonKey(name: 'hospital_id', fromJson: _intFromDynamic)
   int? get hospitalId;
   @override
   String get name;

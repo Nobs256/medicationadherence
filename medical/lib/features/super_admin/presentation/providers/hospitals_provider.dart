@@ -8,16 +8,18 @@ part 'hospitals_provider.g.dart';
 @riverpod
 Future<Map<String, dynamic>> superAdminStats(SuperAdminStatsRef ref) async {
   final api = ref.watch(apiServiceProvider);
-  final response = await api.get('/dashboard');
-  return response['data'] as Map<String, dynamic>;
+  final json = await api.get('/dashboard');
+  return (json['data'] as Map<String, dynamic>?) ?? {};
 }
 
 @riverpod
 Future<List<Hospital>> hospitalsList(HospitalsListRef ref) async {
   final api = ref.watch(apiServiceProvider);
-  final response = await api.get('/hospitals');
-  final List<dynamic> data = response['data'] ?? [];
-  return data.map((json) => Hospital.fromJson(json as Map<String, dynamic>)).toList();
+  final json = await api.get('/hospitals');
+  final List<dynamic> data = json['data'] ?? [];
+  return data
+      .map((json) => Hospital.fromJson(json as Map<String, dynamic>))
+      .toList();
 }
 
 @riverpod
@@ -41,11 +43,7 @@ class HospitalActions extends _$HospitalActions {
     state = const AsyncValue.loading();
     state = await AsyncValue.guard(() async {
       final api = ref.read(apiServiceProvider);
-      final data = {
-        'name': name,
-        'address': address,
-        'email': email,
-      };
+      final data = {'name': name, 'address': address, 'email': email};
       // Note: If logo exists, implementation would use api.uploadFile
       await api.post('/hospitals', data: data);
       ref.invalidate(hospitalsListProvider);

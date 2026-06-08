@@ -23,8 +23,9 @@ PrescriptionMedication _$PrescriptionMedicationFromJson(
 
 /// @nodoc
 mixin _$PrescriptionMedication {
+  @JsonKey(fromJson: _intFromJson)
   int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'medication_id')
+  @JsonKey(name: 'medication_id', fromJson: _intFromJson)
   int get medicationId => throw _privateConstructorUsedError;
   @JsonKey(name: 'medication_name')
   String get medicationName => throw _privateConstructorUsedError;
@@ -45,7 +46,7 @@ mixin _$PrescriptionMedication {
   bool get withWater => throw _privateConstructorUsedError;
   @JsonKey(name: 'special_instructions')
   String? get specialInstructions => throw _privateConstructorUsedError;
-  @JsonKey(name: 'duration_days')
+  @JsonKey(name: 'duration_days', fromJson: _intFromDynamic)
   int? get durationDays => throw _privateConstructorUsedError;
 
   /// Serializes this PrescriptionMedication to a JSON map.
@@ -66,8 +67,8 @@ abstract class $PrescriptionMedicationCopyWith<$Res> {
   ) = _$PrescriptionMedicationCopyWithImpl<$Res, PrescriptionMedication>;
   @useResult
   $Res call({
-    int id,
-    @JsonKey(name: 'medication_id') int medicationId,
+    @JsonKey(fromJson: _intFromJson) int id,
+    @JsonKey(name: 'medication_id', fromJson: _intFromJson) int medicationId,
     @JsonKey(name: 'medication_name') String medicationName,
     @JsonKey(name: 'generic_name') String? genericName,
     String? category,
@@ -81,7 +82,8 @@ abstract class $PrescriptionMedicationCopyWith<$Res> {
     @JsonKey(name: 'with_water', fromJson: _boolFromInt, toJson: _boolToInt)
     bool withWater,
     @JsonKey(name: 'special_instructions') String? specialInstructions,
-    @JsonKey(name: 'duration_days') int? durationDays,
+    @JsonKey(name: 'duration_days', fromJson: _intFromDynamic)
+    int? durationDays,
   });
 }
 
@@ -206,8 +208,8 @@ abstract class _$$PrescriptionMedicationImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int id,
-    @JsonKey(name: 'medication_id') int medicationId,
+    @JsonKey(fromJson: _intFromJson) int id,
+    @JsonKey(name: 'medication_id', fromJson: _intFromJson) int medicationId,
     @JsonKey(name: 'medication_name') String medicationName,
     @JsonKey(name: 'generic_name') String? genericName,
     String? category,
@@ -221,7 +223,8 @@ abstract class _$$PrescriptionMedicationImplCopyWith<$Res>
     @JsonKey(name: 'with_water', fromJson: _boolFromInt, toJson: _boolToInt)
     bool withWater,
     @JsonKey(name: 'special_instructions') String? specialInstructions,
-    @JsonKey(name: 'duration_days') int? durationDays,
+    @JsonKey(name: 'duration_days', fromJson: _intFromDynamic)
+    int? durationDays,
   });
 }
 
@@ -336,8 +339,9 @@ class __$$PrescriptionMedicationImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$PrescriptionMedicationImpl implements _PrescriptionMedication {
   const _$PrescriptionMedicationImpl({
-    required this.id,
-    @JsonKey(name: 'medication_id') required this.medicationId,
+    @JsonKey(fromJson: _intFromJson) required this.id,
+    @JsonKey(name: 'medication_id', fromJson: _intFromJson)
+    required this.medicationId,
     @JsonKey(name: 'medication_name') required this.medicationName,
     @JsonKey(name: 'generic_name') this.genericName,
     this.category,
@@ -351,16 +355,18 @@ class _$PrescriptionMedicationImpl implements _PrescriptionMedication {
     @JsonKey(name: 'with_water', fromJson: _boolFromInt, toJson: _boolToInt)
     required this.withWater,
     @JsonKey(name: 'special_instructions') this.specialInstructions,
-    @JsonKey(name: 'duration_days') this.durationDays,
+    @JsonKey(name: 'duration_days', fromJson: _intFromDynamic)
+    this.durationDays,
   }) : _timesOfDay = timesOfDay;
 
   factory _$PrescriptionMedicationImpl.fromJson(Map<String, dynamic> json) =>
       _$$PrescriptionMedicationImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   final int id;
   @override
-  @JsonKey(name: 'medication_id')
+  @JsonKey(name: 'medication_id', fromJson: _intFromJson)
   final int medicationId;
   @override
   @JsonKey(name: 'medication_name')
@@ -399,7 +405,7 @@ class _$PrescriptionMedicationImpl implements _PrescriptionMedication {
   @JsonKey(name: 'special_instructions')
   final String? specialInstructions;
   @override
-  @JsonKey(name: 'duration_days')
+  @JsonKey(name: 'duration_days', fromJson: _intFromDynamic)
   final int? durationDays;
 
   @override
@@ -482,8 +488,9 @@ class _$PrescriptionMedicationImpl implements _PrescriptionMedication {
 
 abstract class _PrescriptionMedication implements PrescriptionMedication {
   const factory _PrescriptionMedication({
-    required final int id,
-    @JsonKey(name: 'medication_id') required final int medicationId,
+    @JsonKey(fromJson: _intFromJson) required final int id,
+    @JsonKey(name: 'medication_id', fromJson: _intFromJson)
+    required final int medicationId,
     @JsonKey(name: 'medication_name') required final String medicationName,
     @JsonKey(name: 'generic_name') final String? genericName,
     final String? category,
@@ -498,16 +505,18 @@ abstract class _PrescriptionMedication implements PrescriptionMedication {
     @JsonKey(name: 'with_water', fromJson: _boolFromInt, toJson: _boolToInt)
     required final bool withWater,
     @JsonKey(name: 'special_instructions') final String? specialInstructions,
-    @JsonKey(name: 'duration_days') final int? durationDays,
+    @JsonKey(name: 'duration_days', fromJson: _intFromDynamic)
+    final int? durationDays,
   }) = _$PrescriptionMedicationImpl;
 
   factory _PrescriptionMedication.fromJson(Map<String, dynamic> json) =
       _$PrescriptionMedicationImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   int get id;
   @override
-  @JsonKey(name: 'medication_id')
+  @JsonKey(name: 'medication_id', fromJson: _intFromJson)
   int get medicationId;
   @override
   @JsonKey(name: 'medication_name')
@@ -540,7 +549,7 @@ abstract class _PrescriptionMedication implements PrescriptionMedication {
   @JsonKey(name: 'special_instructions')
   String? get specialInstructions;
   @override
-  @JsonKey(name: 'duration_days')
+  @JsonKey(name: 'duration_days', fromJson: _intFromDynamic)
   int? get durationDays;
 
   /// Create a copy of PrescriptionMedication

@@ -16,6 +16,7 @@ class AuthController {
      * POST /auth/login
      */
     public function login(): void {
+        try {
         $body  = Request::json();
         $email = sanitize($body['email'] ?? '');
         $pass  = $body['password'] ?? '';
@@ -48,6 +49,9 @@ class AuthController {
         unset($user['password']);
 
         Response::json(array_merge($tokens, ['user' => $user]));
+        } catch (Throwable $e) {
+            Response::error('Server Crash: ' . $e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine(), 500);
+        }
     }
 
     /**

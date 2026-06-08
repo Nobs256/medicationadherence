@@ -14,14 +14,16 @@ class HospitalController {
 
     public function index(): void {
         $db   = Database::getInstance();
-        $stmt = $db->query("
+        $sql = "
             SELECT h.*,
                 (SELECT COUNT(*) FROM users u JOIN roles r ON r.id=u.role_id WHERE u.hospital_id=h.id AND r.name='doctor' AND u.is_active=1) AS doctor_count,
                 (SELECT COUNT(*) FROM users u JOIN roles r ON r.id=u.role_id WHERE u.hospital_id=h.id AND r.name='patient' AND u.is_active=1) AS patient_count,
-                (SELECT ROUND(AVG(al.adherence_percentage),1) FROM adherence_logs al JOIN users u ON u.id=al.patient_id WHERE u.hospital_id=h.id AND al.log_date >= DATE_SUB(CURDATE(),INTERVAL 30 DAY)) AS avg_adherence
+                (SELECT ROUND(IFNULL(AVG(al.adherence_percentage), 0), 1) FROM adherence_logs al JOIN users u ON u.id=al.patient_id WHERE u.hospital_id=h.id AND al.log_date >= DATE_SUB(CURDATE(),INTERVAL 30 DAY)) AS avg_adherence
             FROM hospitals h ORDER BY h.name ASC
-        ");
-        Response::json($stmt->fetchAll());
+        ";
+        $stmt = $db->prepare($sql);
+        $stmt->execute();
+        Response::json($stmt->fetchAll(PDO::FETCH_ASSOC));
     }
 
     public function store(): void {

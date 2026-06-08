@@ -9,13 +9,13 @@ part of 'lifestyle_advice.dart';
 _$LifestyleAdviceImpl _$$LifestyleAdviceImplFromJson(
   Map<String, dynamic> json,
 ) => _$LifestyleAdviceImpl(
-  id: (json['id'] as num).toInt(),
-  prescriptionId: (json['prescription_id'] as num).toInt(),
+  id: _intFromJson(json['id']),
+  prescriptionId: _intFromJson(json['prescription_id']),
   adviceType: json['advice_type'] as String,
   title: json['title'] as String,
   description: json['description'] as String,
   frequency: json['frequency'] as String?,
-  durationMinutes: (json['duration_minutes'] as num?)?.toInt(),
+  durationMinutes: _intFromDynamic(json['duration_minutes']),
 );
 
 Map<String, dynamic> _$$LifestyleAdviceImplToJson(

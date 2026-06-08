@@ -12,6 +12,7 @@ class PrescriptionController {
     }
 
     public function index(): void {
+        try {
         $db        = Database::getInstance();
         $patientId = (int)Request::get('patient_id');
         $active    = Request::get('active');
@@ -36,23 +37,36 @@ class PrescriptionController {
         ");
         $stmt->execute($params);
         Response::json($stmt->fetchAll());
+        } catch (Throwable $e) {
+            Response::error('Fetch failed: ' . $e->getMessage(), 500);
+        }
     }
 
     public function store(): void {
         $body = Request::json();
         $db   = Database::getInstance();
-        $db->beginTransaction();
 
+        $missing = validateRequired($body, ['patient_id', 'diagnosis', 'start_date', 'medications']);
+        if ($missing) Response::error('Missing: ' . implode(', ', $missing), 422);
+
+        // Verify the patient is assigned to this doctor and belongs to the same hospital
+        $check = $db->prepare("SELECT 1 FROM doctor_patient_assignments WHERE doctor_id=? AND patient_id=? AND hospital_id=? AND is_active=1");
+        $check->execute([$this->auth['uid'], (int)$body['patient_id'], $this->auth['hid']]);
+        if (!$check->fetch()) Response::error('Patient not assigned to you or in a different hospital', 403);
+
+        $db->beginTransaction();
         try {
             // 1. Insert prescription
             $stmt = $db->prepare("INSERT INTO prescriptions (patient_id, doctor_id, hospital_id, diagnosis, notes, start_date, end_date) VALUES (?,?,?,?,?,?,?)");
-            $stmt->execute([$body['patient_id'], $this->auth['uid'], $this->auth['hid'], $body['diagnosis'], $body['notes'], $body['start_date'], $body['end_date'] ?? null]);
+            $stmt->execute([(int)$body['patient_id'], $this->auth['uid'], $this->auth['hid'], sanitize($body['diagnosis']), sanitize($body['notes'] ?? ''), $body['start_date'], $body['end_date'] ?? null]);
             $prescriptionId = $db->lastInsertId();
 
             // 2. Insert each medication + generate schedules
             foreach ($body['medications'] as $med) {
+                if (empty($med['medication_id']) || empty($med['times_of_day'])) continue;
+
                 $stmt = $db->prepare("INSERT INTO prescription_medications (prescription_id, medication_id, dosage, frequency, times_of_day, with_food, with_water, special_instructions, duration_days) VALUES (?,?,?,?,?,?,?,?,?)");
-                $stmt->execute([$prescriptionId, $med['medication_id'], $med['dosage'], $med['frequency'], json_encode($med['times_of_day']), $med['with_food'] ? 1 : 0, $med['with_water'] ? 1 : 0, $med['special_instructions'] ?? null, $med['duration_days'] ?? null]);
+                $stmt->execute([$prescriptionId, (int)$med['medication_id'], sanitize($med['dosage']), sanitize($med['frequency']), json_encode($med['times_of_day']), $med['with_food'] ? 1 : 0, $med['with_water'] ? 1 : 0, sanitize($med['special_instructions'] ?? null), $med['duration_days'] ?? null]);
                 $pmId = $db->lastInsertId();
 
                 // Generate medication_schedules
@@ -65,19 +79,21 @@ class PrescriptionController {
                     $date->modify("+{$day} days");
                     foreach ($med['times_of_day'] as $time) {
                         [$hour, $minute] = explode(':', $time);
-                        $scheduleInserts[] = [$pmId, $body['patient_id'], $date->format('Y-m-d') . " {$hour}:{$minute}:00"];
+                        $scheduleInserts[] = [$pmId, (int)$body['patient_id'], $date->format('Y-m-d') . " {$hour}:{$minute}:00"];
                     }
                 }
                 // Batch insert schedules
-                $placeholders = implode(',', array_fill(0, count($scheduleInserts), '(?,?,?)'));
-                $flatValues    = array_merge(...$scheduleInserts);
-                $db->prepare("INSERT INTO medication_schedules (prescription_medication_id, patient_id, scheduled_time) VALUES {$placeholders}")->execute($flatValues);
+                if (!empty($scheduleInserts)) {
+                    $placeholders = implode(',', array_fill(0, count($scheduleInserts), '(?,?,?)'));
+                    $flatValues    = array_merge(...$scheduleInserts);
+                    $db->prepare("INSERT INTO medication_schedules (prescription_medication_id, patient_id, scheduled_time) VALUES {$placeholders}")->execute($flatValues);
+                }
             }
 
             // 3. Insert lifestyle advice
             foreach ($body['lifestyle_advice'] ?? [] as $advice) {
                 $db->prepare("INSERT INTO lifestyle_advice (prescription_id, advice_type, title, description, frequency, duration_minutes) VALUES (?,?,?,?,?,?)")
-                   ->execute([$prescriptionId, $advice['type'], $advice['title'], $advice['description'], $advice['frequency'] ?? null, $advice['duration_minutes'] ?? null]);
+                   ->execute([$prescriptionId, $advice['type'], sanitize($advice['title']), sanitize($advice['description']), sanitize($advice['frequency'] ?? null), $advice['duration_minutes'] ?? null]);
             }
 
             // 4. Send in-app notification to patient
@@ -100,6 +116,7 @@ class PrescriptionController {
     }
 
     public function show(string $id): void {
+        try {
         $db   = Database::getInstance();
         $stmt = $db->prepare("
             SELECT p.*, pat.full_name AS patient_name, pat.date_of_birth, pat.avatar_url AS patient_avatar,
@@ -114,7 +131,9 @@ class PrescriptionController {
         $prescription = $stmt->fetch();
         if (!$prescription) Response::error('Not found', 404);
 
+        // Enforce access control
         if ($this->auth['role'] === 'patient' && $prescription['patient_id'] != $this->auth['uid']) Response::error('Forbidden', 403);
+        if ($this->auth['role'] !== 'super_admin' && $prescription['hospital_id'] != $this->auth['hid']) Response::error('Forbidden', 403);
 
         $meds = $db->prepare("
             SELECT pm.*, m.name AS medication_name, m.generic_name, m.category,
@@ -138,9 +157,13 @@ class PrescriptionController {
         $prescription['lifestyle_advice'] = $advice->fetchAll();
 
         Response::json($prescription);
+        } catch (Throwable $e) {
+            Response::error('View Error: ' . $e->getMessage(), 500);
+        }
     }
 
     public function myPrescriptions(): void {
+        try {
         $db   = Database::getInstance();
         $stmt = $db->prepare("
             SELECT p.id, p.diagnosis, p.start_date, p.end_date, p.is_active, doc.full_name AS doctor_name
@@ -151,5 +174,8 @@ class PrescriptionController {
         ");
         $stmt->execute([$this->auth['uid']]);
         Response::json($stmt->fetchAll());
+        } catch (Throwable $e) {
+            Response::error('Fetch Error: ' . $e->getMessage(), 500);
+        }
     }
 }

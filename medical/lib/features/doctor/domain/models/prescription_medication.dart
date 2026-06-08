@@ -6,8 +6,9 @@ part 'prescription_medication.g.dart';
 @freezed
 class PrescriptionMedication with _$PrescriptionMedication {
   const factory PrescriptionMedication({
-    required int id,
-    @JsonKey(name: 'medication_id') required int medicationId,
+    @JsonKey(fromJson: _intFromJson) required int id,
+    @JsonKey(name: 'medication_id', fromJson: _intFromJson)
+    required int medicationId,
     @JsonKey(name: 'medication_name') required String medicationName,
     @JsonKey(name: 'generic_name') String? genericName,
     String? category,
@@ -21,12 +22,24 @@ class PrescriptionMedication with _$PrescriptionMedication {
     @JsonKey(name: 'with_water', fromJson: _boolFromInt, toJson: _boolToInt)
     required bool withWater,
     @JsonKey(name: 'special_instructions') String? specialInstructions,
-    @JsonKey(name: 'duration_days') int? durationDays,
+    @JsonKey(name: 'duration_days', fromJson: _intFromDynamic)
+    int? durationDays,
   }) = _PrescriptionMedication;
 
   factory PrescriptionMedication.fromJson(Map<String, dynamic> json) =>
       _$PrescriptionMedicationFromJson(json);
 }
 
-bool _boolFromInt(dynamic val) => val == 1 || val == true || val == "1";
+bool _boolFromInt(dynamic val) =>
+    val == 1 || val == true || val == "1" || val == "true";
+
 int _boolToInt(bool val) => val ? 1 : 0;
+
+int _intFromJson(dynamic val) =>
+    val is int ? val : int.tryParse(val?.toString() ?? '') ?? 0;
+
+int? _intFromDynamic(dynamic val) {
+  if (val == null) return null;
+  if (val is int) return val;
+  return int.tryParse(val.toString());
+}

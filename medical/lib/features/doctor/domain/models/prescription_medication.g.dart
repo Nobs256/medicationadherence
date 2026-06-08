@@ -9,8 +9,8 @@ part of 'prescription_medication.dart';
 _$PrescriptionMedicationImpl _$$PrescriptionMedicationImplFromJson(
   Map<String, dynamic> json,
 ) => _$PrescriptionMedicationImpl(
-  id: (json['id'] as num).toInt(),
-  medicationId: (json['medication_id'] as num).toInt(),
+  id: _intFromJson(json['id']),
+  medicationId: _intFromJson(json['medication_id']),
   medicationName: json['medication_name'] as String,
   genericName: json['generic_name'] as String?,
   category: json['category'] as String?,
@@ -23,7 +23,7 @@ _$PrescriptionMedicationImpl _$$PrescriptionMedicationImplFromJson(
   withFood: _boolFromInt(json['with_food']),
   withWater: _boolFromInt(json['with_water']),
   specialInstructions: json['special_instructions'] as String?,
-  durationDays: (json['duration_days'] as num?)?.toInt(),
+  durationDays: _intFromDynamic(json['duration_days']),
 );
 
 Map<String, dynamic> _$$PrescriptionMedicationImplToJson(

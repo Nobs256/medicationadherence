@@ -9,7 +9,7 @@ part of 'medication_schedule.dart';
 _$MedicationScheduleImpl _$$MedicationScheduleImplFromJson(
   Map<String, dynamic> json,
 ) => _$MedicationScheduleImpl(
-  id: (json['id'] as num).toInt(),
+  id: _intFromJson(json['id']),
   scheduledTime: json['scheduled_time'] as String,
   status: json['status'] as String,
   confirmedAt: json['confirmed_at'] as String?,
@@ -20,7 +20,7 @@ _$MedicationScheduleImpl _$$MedicationScheduleImplFromJson(
   withFood: _boolFromInt(json['with_food']),
   withWater: _boolFromInt(json['with_water']),
   specialInstructions: json['special_instructions'] as String?,
-  prescriptionId: json['prescription_id'] as String?,
+  prescriptionId: _intFromDynamic(json['prescription_id']),
   doctorName: json['doctor_name'] as String?,
   diagnosis: json['diagnosis'] as String?,
   lifestyleTips:

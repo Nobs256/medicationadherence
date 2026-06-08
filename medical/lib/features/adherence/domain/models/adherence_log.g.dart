@@ -9,10 +9,10 @@ part of 'adherence_log.dart';
 _$AdherenceLogImpl _$$AdherenceLogImplFromJson(Map<String, dynamic> json) =>
     _$AdherenceLogImpl(
       logDate: json['log_date'] as String,
-      totalScheduled: (json['total_scheduled'] as num).toInt(),
-      totalTaken: (json['total_taken'] as num).toInt(),
-      totalMissed: (json['total_missed'] as num).toInt(),
-      totalSkipped: (json['total_skipped'] as num).toInt(),
+      totalScheduled: _intFromJson(json['total_scheduled']),
+      totalTaken: _intFromJson(json['total_taken']),
+      totalMissed: _intFromJson(json['total_missed']),
+      totalSkipped: _intFromJson(json['total_skipped']),
       adherencePercentage: _doubleFromDynamic(json['adherence_percentage']),
     );
 

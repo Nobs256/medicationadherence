@@ -6,7 +6,7 @@ part of 'hospitals_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$superAdminStatsHash() => r'8e0aa59e5ecc5bd5432aa58554f9cbe2cf528c3b';
+String _$superAdminStatsHash() => r'05e4072e457171090637db7673f6041a20db95da';
 
 /// See also [superAdminStats].
 @ProviderFor(superAdminStats)
@@ -25,7 +25,7 @@ final superAdminStatsProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SuperAdminStatsRef = AutoDisposeFutureProviderRef<Map<String, dynamic>>;
-String _$hospitalsListHash() => r'd277a1b661936bb6cf957d064b8a528d2c8c763f';
+String _$hospitalsListHash() => r'ffe50e9138035b4fb9c53385dd40029cd9bebaf6';
 
 /// See also [hospitalsList].
 @ProviderFor(hospitalsList)

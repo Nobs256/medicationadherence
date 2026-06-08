@@ -6,12 +6,12 @@ part 'user_profile.g.dart';
 @freezed
 class UserProfile with _$UserProfile {
   const factory UserProfile({
-    required int id,
+    @JsonKey(fromJson: _intFromAny) required int id,
     @JsonKey(name: 'full_name') required String fullName,
     required String email,
     String? phone,
     @JsonKey(name: 'role_name') required String roleName,
-    @JsonKey(name: 'hospital_id') int? hospitalId,
+    @JsonKey(name: 'hospital_id', fromJson: _intFromAnyNullable) int? hospitalId,
     @JsonKey(name: 'hospital_name') String? hospitalName,
     @JsonKey(name: 'hospital_logo') String? hospitalLogo,
     @JsonKey(name: 'avatar_url') String? avatarUrl,
@@ -27,5 +27,12 @@ class UserProfile with _$UserProfile {
       _$UserProfileFromJson(json);
 }
 
-bool _boolFromInt(dynamic val) => val == 1 || val == true;
+bool _boolFromInt(dynamic val) => 
+    val == 1 || val == true || val.toString() == '1' || val.toString().toLowerCase() == 'true';
 int _boolToInt(bool val) => val ? 1 : 0;
+
+int _intFromAny(dynamic val) => val is int ? val : int.parse(val.toString());
+int? _intFromAnyNullable(dynamic val) {
+  if (val == null) return null;
+  return val is int ? val : int.tryParse(val.toString());
+}

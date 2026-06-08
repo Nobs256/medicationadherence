@@ -3,6 +3,8 @@ require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../core/Database.php';
 require_once __DIR__ . '/../core/Helpers.php';
 
+$sentCount = 0;
+try {
 $db       = Database::getInstance();
 $tomorrow = date('Y-m-d'); // TESTING: Check for today's appointments instead of tomorrow
 
@@ -21,7 +23,10 @@ $stmt = $db->prepare("
 $stmt->execute([$tomorrow]);
 $appointments = $stmt->fetchAll();
 
+if (!defined('ONESIGNAL_KEY') || !ONESIGNAL_KEY) return;
+
 foreach ($appointments as $appt) {
+    try {
     $time    = date('g:i A', strtotime($appt['appointment_date']));
     $payload = [
         'app_id'             => ONESIGNAL_APP_ID,
@@ -51,7 +56,14 @@ foreach ($appointments as $appt) {
         'reference_id' => $appt['id'],
         'reference_table' => 'appointments',
     ]);
+    $sentCount++;
+    } catch (Throwable $e) {
+        continue;
+    }
+}
+} catch (Throwable $e) {
+    error_log("Appointment Reminder Cron Error: " . $e->getMessage());
 }
 
-echo "[" . date('Y-m-d H:i:s') . "] Appointment reminders sent: " . count($appointments) . "\n";
+echo "[" . date('Y-m-d H:i:s') . "] Appointment reminders sent: $sentCount\n";
 ?>

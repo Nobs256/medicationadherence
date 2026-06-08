@@ -8,12 +8,12 @@ part of 'user_profile.dart';
 
 _$UserProfileImpl _$$UserProfileImplFromJson(Map<String, dynamic> json) =>
     _$UserProfileImpl(
-      id: (json['id'] as num).toInt(),
+      id: _intFromAny(json['id']),
       fullName: json['full_name'] as String,
       email: json['email'] as String,
       phone: json['phone'] as String?,
       roleName: json['role_name'] as String,
-      hospitalId: (json['hospital_id'] as num?)?.toInt(),
+      hospitalId: _intFromAnyNullable(json['hospital_id']),
       hospitalName: json['hospital_name'] as String?,
       hospitalLogo: json['hospital_logo'] as String?,
       avatarUrl: json['avatar_url'] as String?,

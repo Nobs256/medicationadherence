@@ -467,6 +467,7 @@ class Auth {
             'iat'  => $now,
             'exp'  => $now + JWT_ACCESS_TTL,
             'uid'  => $user['id'],
+            'name' => $user['full_name'],
             'role' => $user['role_name'],
             'hid'  => $user['hospital_id'],
         ];
@@ -1883,34 +1884,6 @@ class UserController {
         $uid  = $this->auth['uid'];
         $hid  = $this->auth['hid'];
 
-        $data = match($role) {
-            'super_admin' => [
-                'total_hospitals'       => $db->query("SELECT COUNT(*) FROM hospitals WHERE is_active=1")->fetchColumn(),
-                'total_users'           => $db->query("SELECT COUNT(*) FROM users WHERE is_active=1")->fetchColumn(),
-                'total_prescriptions'   => $db->query("SELECT COUNT(*) FROM prescriptions WHERE is_active=1")->fetchColumn(),
-                'avg_adherence'         => $db->query("SELECT ROUND(AVG(adherence_percentage),1) FROM adherence_logs WHERE log_date >= DATE_SUB(CURDATE(),INTERVAL 30 DAY)")->fetchColumn(),
-            ],
-            'hospital_admin' => [
-                'total_doctors'         => $this->countUsers($db, 'doctor', $hid),
-                'total_patients'        => $this->countUsers($db, 'patient', $hid),
-                'active_prescriptions'  => $db->prepare("SELECT COUNT(*) FROM prescriptions WHERE hospital_id=? AND is_active=1")->execute([$hid]) ? $db->query("SELECT FOUND_ROWS()")->fetchColumn() : 0,
-                'avg_adherence'         => $this->hospitalAdherence($db, $hid),
-            ],
-            'doctor' => [
-                'my_patients'           => $db->prepare("SELECT COUNT(*) FROM doctor_patient_assignments WHERE doctor_id=? AND is_active=1")->execute([$uid]) ? null : 0,
-                'todays_appointments'   => $db->prepare("SELECT COUNT(*) FROM appointments WHERE doctor_id=? AND DATE(appointment_date)=CURDATE() AND status='scheduled'")->execute([$uid]) ? null : 0,
-                'active_prescriptions'  => $db->prepare("SELECT COUNT(*) FROM prescriptions WHERE doctor_id=? AND is_active=1")->execute([$uid]) ? null : 0,
-            ],
-            'patient' => [
-                'todays_total'          => $this->patientTodayStats($db, $uid, 'total'),
-                'todays_taken'          => $this->patientTodayStats($db, $uid, 'taken'),
-                'todays_pending'        => $this->patientTodayStats($db, $uid, 'pending'),
-                'adherence_this_week'   => $this->patientWeekAdherence($db, $uid),
-            ],
-            default => [],
-        };
-
-        // Re-run properly with execute + fetchColumn
         Response::json($this->getDashboardData($db, $role, $uid, $hid));
     }
 

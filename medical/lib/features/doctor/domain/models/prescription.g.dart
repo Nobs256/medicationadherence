@@ -8,7 +8,7 @@ part of 'prescription.dart';
 
 _$PrescriptionImpl _$$PrescriptionImplFromJson(Map<String, dynamic> json) =>
     _$PrescriptionImpl(
-      id: (json['id'] as num).toInt(),
+      id: _intFromJson(json['id']),
       diagnosis: json['diagnosis'] as String,
       notes: json['notes'] as String?,
       startDate: json['start_date'] as String,
@@ -16,8 +16,8 @@ _$PrescriptionImpl _$$PrescriptionImplFromJson(Map<String, dynamic> json) =>
       isActive: _boolFromInt(json['is_active']),
       doctorName: json['doctor_name'] as String,
       patientName: json['patient_name'] as String?,
-      medicationCount: (json['medication_count'] as num?)?.toInt(),
-      adviceCount: (json['advice_count'] as num?)?.toInt(),
+      medicationCount: _intFromDynamic(json['medication_count']),
+      adviceCount: _intFromDynamic(json['advice_count']),
       medications:
           (json['medications'] as List<dynamic>?)
               ?.map(

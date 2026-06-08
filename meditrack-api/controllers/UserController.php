@@ -14,6 +14,7 @@ class UserController {
 
     // GET /users?role=doctor&hospital_id=X&page=1
     public function index(): void {
+        try {
         $db         = Database::getInstance();
         $role       = sanitize(Request::get('role', ''));
         $hospitalId = (int)Request::get('hospital_id', $this->auth['hid'] ?? 0);
@@ -60,6 +61,9 @@ class UserController {
         $stmt->execute($params);
 
         Response::paginated($stmt->fetchAll(), $count, $page, $perPage);
+        } catch (Throwable $e) {
+            Response::error('Failed to fetch users: ' . $e->getMessage(), 500);
+        }
     }
 
     public function store(): void {
@@ -116,6 +120,7 @@ class UserController {
     }
 
     public function show(string $id): void {
+        try {
         $db   = Database::getInstance();
         $stmt = $db->prepare("
             SELECT u.id, u.full_name, u.email, u.phone, u.avatar_url, u.date_of_birth,
@@ -141,6 +146,9 @@ class UserController {
         }
 
         Response::json($user);
+        } catch (Throwable $e) {
+            Response::error('User details failed: ' . $e->getMessage(), 500);
+        }
     }
 
     public function update(string $id): void {
@@ -207,12 +215,16 @@ class UserController {
     }
 
     public function dashboard(): void {
+        try {
         $db   = Database::getInstance();
         $role = $this->auth['role'];
         $uid  = $this->auth['uid'];
         $hid  = $this->auth['hid'];
 
         Response::json($this->getDashboardData($db, $role, $uid, $hid));
+        } catch (Throwable $e) {
+            Response::error('Dashboard Error: ' . $e->getMessage(), 500);
+        }
     }
 
     private function countUsers(PDO $db, string $role, int $hospitalId): int {
@@ -247,23 +259,44 @@ class UserController {
 
     private function getDashboardData(PDO $db, string $role, int $uid, ?int $hid): array {
         if ($role === 'super_admin') {
-            $s1 = $db->query("SELECT COUNT(*) FROM hospitals WHERE is_active=1"); $hospitals = (int)$s1->fetchColumn();
-            $s2 = $db->query("SELECT COUNT(*) FROM users WHERE is_active=1");     $users = (int)$s2->fetchColumn();
-            $s3 = $db->query("SELECT COUNT(*) FROM prescriptions WHERE is_active=1"); $prescriptions = (int)$s3->fetchColumn();
-            $s4 = $db->query("SELECT ROUND(AVG(adherence_percentage),1) FROM adherence_logs WHERE log_date >= DATE_SUB(CURDATE(),INTERVAL 30 DAY)"); $adherence = (float)($s4->fetchColumn() ?? 0);
-            return compact('hospitals','users','prescriptions','adherence');
+            $hospitals = 0; $users = 0; $prescriptions = 0; $adherence = 0.0;
+            
+            $s1 = $db->prepare("SELECT COUNT(*) FROM hospitals WHERE is_active=1");
+            if ($s1->execute()) $hospitals = (int)$s1->fetchColumn();
+            
+            $s2 = $db->prepare("SELECT COUNT(*) FROM users WHERE is_active=1");
+            if ($s2->execute()) $users = (int)$s2->fetchColumn();
+            
+            $s3 = $db->prepare("SELECT COUNT(*) FROM prescriptions WHERE is_active=1");
+            if ($s3->execute()) $prescriptions = (int)$s3->fetchColumn();
+            
+            $s4 = $db->prepare("SELECT ROUND(IFNULL(AVG(adherence_percentage), 0), 1) FROM adherence_logs WHERE log_date >= DATE_SUB(CURDATE(),INTERVAL 30 DAY)");
+            if ($s4->execute()) $adherence = (float)$s4->fetchColumn();
+            
+            return ['hospitals' => $hospitals, 'users' => $users, 'prescriptions' => $prescriptions, 'adherence' => $adherence];
         }
         if ($role === 'hospital_admin') {
-            return ['doctors' => $this->countUsers($db,'doctor',$hid), 'patients' => $this->countUsers($db,'patient',$hid), 'avg_adherence' => $this->hospitalAdherence($db,$hid)];
+            return [
+                'doctors' => $this->countUsers($db,'doctor',$hid), 
+                'patients' => $this->countUsers($db,'patient',$hid), 
+                'avg_adherence' => $this->hospitalAdherence($db,$hid)];
         }
         if ($role === 'doctor') {
-            $s1 = $db->prepare("SELECT COUNT(*) FROM doctor_patient_assignments WHERE doctor_id=? AND is_active=1"); $s1->execute([$uid]); $patients = (int)$s1->fetchColumn();
-            $s2 = $db->prepare("SELECT COUNT(*) FROM appointments WHERE doctor_id=? AND DATE(appointment_date)=CURDATE() AND status='scheduled'"); $s2->execute([$uid]); $todayAppts = (int)$s2->fetchColumn();
-            $s3 = $db->prepare("SELECT COUNT(*) FROM prescriptions WHERE doctor_id=? AND is_active=1"); $s3->execute([$uid]); $prescriptions = (int)$s3->fetchColumn();
-            return compact('patients','todayAppts','prescriptions');
+            $patients = 0; $todayAppts = 0; $prescriptions = 0;
+            $s1 = $db->prepare("SELECT COUNT(*) FROM doctor_patient_assignments WHERE doctor_id=? AND is_active=1");
+            if ($s1->execute([$uid])) $patients = (int)$s1->fetchColumn();
+            $s2 = $db->prepare("SELECT COUNT(*) FROM appointments WHERE doctor_id=? AND DATE(appointment_date)=CURDATE() AND status='scheduled'");
+            if ($s2->execute([$uid])) $todayAppts = (int)$s2->fetchColumn();
+            $s3 = $db->prepare("SELECT COUNT(*) FROM prescriptions WHERE doctor_id=? AND is_active=1");
+            if ($s3->execute([$uid])) $prescriptions = (int)$s3->fetchColumn();
+            return ['patients' => $patients, 'todayAppts' => $todayAppts, 'prescriptions' => $prescriptions];
         }
-        // patient
-        return ['today_total' => $this->patientTodayStats($db,$uid,'total'), 'today_taken' => $this->patientTodayStats($db,$uid,'taken'), 'today_pending' => $this->patientTodayStats($db,$uid,'pending'), 'week_adherence' => $this->patientWeekAdherence($db,$uid)];
+        return [
+            'today_total' => $this->patientTodayStats($db, $uid, 'total'),
+            'today_taken' => $this->patientTodayStats($db, $uid, 'taken'),
+            'today_pending' => $this->patientTodayStats($db, $uid, 'pending'),
+            'week_adherence' => $this->patientWeekAdherence($db, $uid)
+        ];
     }
 }
 ?>

@@ -8,15 +8,15 @@ part of 'hospital.dart';
 
 _$HospitalImpl _$$HospitalImplFromJson(Map<String, dynamic> json) =>
     _$HospitalImpl(
-      id: (json['id'] as num).toInt(),
+      id: _intFromJson(json['id']),
       name: json['name'] as String,
       address: json['address'] as String?,
       phone: json['phone'] as String?,
       email: json['email'] as String?,
       logoUrl: json['logo_url'] as String?,
       isActive: _boolFromInt(json['is_active']),
-      doctorCount: (json['doctor_count'] as num?)?.toInt(),
-      patientCount: (json['patient_count'] as num?)?.toInt(),
+      doctorCount: _intFromDynamic(json['doctor_count']),
+      patientCount: _intFromDynamic(json['patient_count']),
       avgAdherence: _doubleFromDynamic(json['avg_adherence']),
     );
 

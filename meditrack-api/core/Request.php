@@ -6,11 +6,11 @@ class Request {
         return is_array($data) ? $data : [];
     }
 
-    public static function get(string $key, mixed $default = null): mixed {
+    public static function get(string $key, $default = null) {
         return $_GET[$key] ?? $default;
     }
 
-    public static function post(string $key, mixed $default = null): mixed {
+    public static function post(string $key, $default = null) {
         return $_POST[$key] ?? $default;
     }
 

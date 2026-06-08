@@ -6,8 +6,8 @@ part 'medication.g.dart';
 @freezed
 class Medication with _$Medication {
   const factory Medication({
-    required int id,
-    @JsonKey(name: 'hospital_id') int? hospitalId,
+    @JsonKey(fromJson: _intFromJson) required int id,
+    @JsonKey(name: 'hospital_id', fromJson: _intFromDynamic) int? hospitalId,
     required String name,
     @JsonKey(name: 'generic_name') String? genericName,
     String? description,
@@ -18,4 +18,13 @@ class Medication with _$Medication {
 
   factory Medication.fromJson(Map<String, dynamic> json) =>
       _$MedicationFromJson(json);
+}
+
+int _intFromJson(dynamic val) =>
+    val is int ? val : int.tryParse(val?.toString() ?? '') ?? 0;
+
+int? _intFromDynamic(dynamic val) {
+  if (val == null) return null;
+  if (val is int) return val;
+  return int.tryParse(val.toString());
 }

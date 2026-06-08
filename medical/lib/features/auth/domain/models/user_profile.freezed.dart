@@ -21,6 +21,7 @@ UserProfile _$UserProfileFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$UserProfile {
+  @JsonKey(fromJson: _intFromAny)
   int get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'full_name')
   String get fullName => throw _privateConstructorUsedError;
@@ -28,7 +29,7 @@ mixin _$UserProfile {
   String? get phone => throw _privateConstructorUsedError;
   @JsonKey(name: 'role_name')
   String get roleName => throw _privateConstructorUsedError;
-  @JsonKey(name: 'hospital_id')
+  @JsonKey(name: 'hospital_id', fromJson: _intFromAnyNullable)
   int? get hospitalId => throw _privateConstructorUsedError;
   @JsonKey(name: 'hospital_name')
   String? get hospitalName => throw _privateConstructorUsedError;
@@ -63,12 +64,13 @@ abstract class $UserProfileCopyWith<$Res> {
   ) = _$UserProfileCopyWithImpl<$Res, UserProfile>;
   @useResult
   $Res call({
-    int id,
+    @JsonKey(fromJson: _intFromAny) int id,
     @JsonKey(name: 'full_name') String fullName,
     String email,
     String? phone,
     @JsonKey(name: 'role_name') String roleName,
-    @JsonKey(name: 'hospital_id') int? hospitalId,
+    @JsonKey(name: 'hospital_id', fromJson: _intFromAnyNullable)
+    int? hospitalId,
     @JsonKey(name: 'hospital_name') String? hospitalName,
     @JsonKey(name: 'hospital_logo') String? hospitalLogo,
     @JsonKey(name: 'avatar_url') String? avatarUrl,
@@ -199,12 +201,13 @@ abstract class _$$UserProfileImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int id,
+    @JsonKey(fromJson: _intFromAny) int id,
     @JsonKey(name: 'full_name') String fullName,
     String email,
     String? phone,
     @JsonKey(name: 'role_name') String roleName,
-    @JsonKey(name: 'hospital_id') int? hospitalId,
+    @JsonKey(name: 'hospital_id', fromJson: _intFromAnyNullable)
+    int? hospitalId,
     @JsonKey(name: 'hospital_name') String? hospitalName,
     @JsonKey(name: 'hospital_logo') String? hospitalLogo,
     @JsonKey(name: 'avatar_url') String? avatarUrl,
@@ -327,12 +330,13 @@ class __$$UserProfileImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$UserProfileImpl implements _UserProfile {
   const _$UserProfileImpl({
-    required this.id,
+    @JsonKey(fromJson: _intFromAny) required this.id,
     @JsonKey(name: 'full_name') required this.fullName,
     required this.email,
     this.phone,
     @JsonKey(name: 'role_name') required this.roleName,
-    @JsonKey(name: 'hospital_id') this.hospitalId,
+    @JsonKey(name: 'hospital_id', fromJson: _intFromAnyNullable)
+    this.hospitalId,
     @JsonKey(name: 'hospital_name') this.hospitalName,
     @JsonKey(name: 'hospital_logo') this.hospitalLogo,
     @JsonKey(name: 'avatar_url') this.avatarUrl,
@@ -348,6 +352,7 @@ class _$UserProfileImpl implements _UserProfile {
       _$$UserProfileImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _intFromAny)
   final int id;
   @override
   @JsonKey(name: 'full_name')
@@ -360,7 +365,7 @@ class _$UserProfileImpl implements _UserProfile {
   @JsonKey(name: 'role_name')
   final String roleName;
   @override
-  @JsonKey(name: 'hospital_id')
+  @JsonKey(name: 'hospital_id', fromJson: _intFromAnyNullable)
   final int? hospitalId;
   @override
   @JsonKey(name: 'hospital_name')
@@ -457,12 +462,13 @@ class _$UserProfileImpl implements _UserProfile {
 
 abstract class _UserProfile implements UserProfile {
   const factory _UserProfile({
-    required final int id,
+    @JsonKey(fromJson: _intFromAny) required final int id,
     @JsonKey(name: 'full_name') required final String fullName,
     required final String email,
     final String? phone,
     @JsonKey(name: 'role_name') required final String roleName,
-    @JsonKey(name: 'hospital_id') final int? hospitalId,
+    @JsonKey(name: 'hospital_id', fromJson: _intFromAnyNullable)
+    final int? hospitalId,
     @JsonKey(name: 'hospital_name') final String? hospitalName,
     @JsonKey(name: 'hospital_logo') final String? hospitalLogo,
     @JsonKey(name: 'avatar_url') final String? avatarUrl,
@@ -478,6 +484,7 @@ abstract class _UserProfile implements UserProfile {
       _$UserProfileImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _intFromAny)
   int get id;
   @override
   @JsonKey(name: 'full_name')
@@ -490,7 +497,7 @@ abstract class _UserProfile implements UserProfile {
   @JsonKey(name: 'role_name')
   String get roleName;
   @override
-  @JsonKey(name: 'hospital_id')
+  @JsonKey(name: 'hospital_id', fromJson: _intFromAnyNullable)
   int? get hospitalId;
   @override
   @JsonKey(name: 'hospital_name')

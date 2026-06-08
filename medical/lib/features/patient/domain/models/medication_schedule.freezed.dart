@@ -21,6 +21,7 @@ MedicationSchedule _$MedicationScheduleFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MedicationSchedule {
+  @JsonKey(fromJson: _intFromJson)
   int get id => throw _privateConstructorUsedError;
   @JsonKey(name: 'scheduled_time')
   String get scheduledTime => throw _privateConstructorUsedError;
@@ -40,8 +41,8 @@ mixin _$MedicationSchedule {
   bool get withWater => throw _privateConstructorUsedError;
   @JsonKey(name: 'special_instructions')
   String? get specialInstructions => throw _privateConstructorUsedError;
-  @JsonKey(name: 'prescription_id')
-  String? get prescriptionId => throw _privateConstructorUsedError;
+  @JsonKey(name: 'prescription_id', fromJson: _intFromDynamic)
+  int? get prescriptionId => throw _privateConstructorUsedError;
   @JsonKey(name: 'doctor_name')
   String? get doctorName => throw _privateConstructorUsedError;
   String? get diagnosis => throw _privateConstructorUsedError;
@@ -67,7 +68,7 @@ abstract class $MedicationScheduleCopyWith<$Res> {
   ) = _$MedicationScheduleCopyWithImpl<$Res, MedicationSchedule>;
   @useResult
   $Res call({
-    int id,
+    @JsonKey(fromJson: _intFromJson) int id,
     @JsonKey(name: 'scheduled_time') String scheduledTime,
     String status,
     @JsonKey(name: 'confirmed_at') String? confirmedAt,
@@ -80,7 +81,8 @@ abstract class $MedicationScheduleCopyWith<$Res> {
     @JsonKey(name: 'with_water', fromJson: _boolFromInt, toJson: _boolToInt)
     bool withWater,
     @JsonKey(name: 'special_instructions') String? specialInstructions,
-    @JsonKey(name: 'prescription_id') String? prescriptionId,
+    @JsonKey(name: 'prescription_id', fromJson: _intFromDynamic)
+    int? prescriptionId,
     @JsonKey(name: 'doctor_name') String? doctorName,
     String? diagnosis,
     @JsonKey(name: 'lifestyle_tips') List<Map<String, String>>? lifestyleTips,
@@ -179,7 +181,7 @@ class _$MedicationScheduleCopyWithImpl<$Res, $Val extends MedicationSchedule>
                 freezed == prescriptionId
                     ? _value.prescriptionId
                     : prescriptionId // ignore: cast_nullable_to_non_nullable
-                        as String?,
+                        as int?,
             doctorName:
                 freezed == doctorName
                     ? _value.doctorName
@@ -211,7 +213,7 @@ abstract class _$$MedicationScheduleImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int id,
+    @JsonKey(fromJson: _intFromJson) int id,
     @JsonKey(name: 'scheduled_time') String scheduledTime,
     String status,
     @JsonKey(name: 'confirmed_at') String? confirmedAt,
@@ -224,7 +226,8 @@ abstract class _$$MedicationScheduleImplCopyWith<$Res>
     @JsonKey(name: 'with_water', fromJson: _boolFromInt, toJson: _boolToInt)
     bool withWater,
     @JsonKey(name: 'special_instructions') String? specialInstructions,
-    @JsonKey(name: 'prescription_id') String? prescriptionId,
+    @JsonKey(name: 'prescription_id', fromJson: _intFromDynamic)
+    int? prescriptionId,
     @JsonKey(name: 'doctor_name') String? doctorName,
     String? diagnosis,
     @JsonKey(name: 'lifestyle_tips') List<Map<String, String>>? lifestyleTips,
@@ -322,7 +325,7 @@ class __$$MedicationScheduleImplCopyWithImpl<$Res>
             freezed == prescriptionId
                 ? _value.prescriptionId
                 : prescriptionId // ignore: cast_nullable_to_non_nullable
-                    as String?,
+                    as int?,
         doctorName:
             freezed == doctorName
                 ? _value.doctorName
@@ -347,7 +350,7 @@ class __$$MedicationScheduleImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$MedicationScheduleImpl implements _MedicationSchedule {
   const _$MedicationScheduleImpl({
-    required this.id,
+    @JsonKey(fromJson: _intFromJson) required this.id,
     @JsonKey(name: 'scheduled_time') required this.scheduledTime,
     required this.status,
     @JsonKey(name: 'confirmed_at') this.confirmedAt,
@@ -360,7 +363,8 @@ class _$MedicationScheduleImpl implements _MedicationSchedule {
     @JsonKey(name: 'with_water', fromJson: _boolFromInt, toJson: _boolToInt)
     required this.withWater,
     @JsonKey(name: 'special_instructions') this.specialInstructions,
-    @JsonKey(name: 'prescription_id') this.prescriptionId,
+    @JsonKey(name: 'prescription_id', fromJson: _intFromDynamic)
+    this.prescriptionId,
     @JsonKey(name: 'doctor_name') this.doctorName,
     this.diagnosis,
     @JsonKey(name: 'lifestyle_tips')
@@ -371,6 +375,7 @@ class _$MedicationScheduleImpl implements _MedicationSchedule {
       _$$MedicationScheduleImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   final int id;
   @override
   @JsonKey(name: 'scheduled_time')
@@ -401,8 +406,8 @@ class _$MedicationScheduleImpl implements _MedicationSchedule {
   @JsonKey(name: 'special_instructions')
   final String? specialInstructions;
   @override
-  @JsonKey(name: 'prescription_id')
-  final String? prescriptionId;
+  @JsonKey(name: 'prescription_id', fromJson: _intFromDynamic)
+  final int? prescriptionId;
   @override
   @JsonKey(name: 'doctor_name')
   final String? doctorName;
@@ -499,7 +504,7 @@ class _$MedicationScheduleImpl implements _MedicationSchedule {
 
 abstract class _MedicationSchedule implements MedicationSchedule {
   const factory _MedicationSchedule({
-    required final int id,
+    @JsonKey(fromJson: _intFromJson) required final int id,
     @JsonKey(name: 'scheduled_time') required final String scheduledTime,
     required final String status,
     @JsonKey(name: 'confirmed_at') final String? confirmedAt,
@@ -512,7 +517,8 @@ abstract class _MedicationSchedule implements MedicationSchedule {
     @JsonKey(name: 'with_water', fromJson: _boolFromInt, toJson: _boolToInt)
     required final bool withWater,
     @JsonKey(name: 'special_instructions') final String? specialInstructions,
-    @JsonKey(name: 'prescription_id') final String? prescriptionId,
+    @JsonKey(name: 'prescription_id', fromJson: _intFromDynamic)
+    final int? prescriptionId,
     @JsonKey(name: 'doctor_name') final String? doctorName,
     final String? diagnosis,
     @JsonKey(name: 'lifestyle_tips')
@@ -523,6 +529,7 @@ abstract class _MedicationSchedule implements MedicationSchedule {
       _$MedicationScheduleImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   int get id;
   @override
   @JsonKey(name: 'scheduled_time')
@@ -552,8 +559,8 @@ abstract class _MedicationSchedule implements MedicationSchedule {
   @JsonKey(name: 'special_instructions')
   String? get specialInstructions;
   @override
-  @JsonKey(name: 'prescription_id')
-  String? get prescriptionId;
+  @JsonKey(name: 'prescription_id', fromJson: _intFromDynamic)
+  int? get prescriptionId;
   @override
   @JsonKey(name: 'doctor_name')
   String? get doctorName;

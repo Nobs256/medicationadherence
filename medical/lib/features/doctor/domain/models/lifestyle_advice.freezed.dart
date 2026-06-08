@@ -21,15 +21,16 @@ LifestyleAdvice _$LifestyleAdviceFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$LifestyleAdvice {
+  @JsonKey(fromJson: _intFromJson)
   int get id => throw _privateConstructorUsedError;
-  @JsonKey(name: 'prescription_id')
+  @JsonKey(name: 'prescription_id', fromJson: _intFromJson)
   int get prescriptionId => throw _privateConstructorUsedError;
   @JsonKey(name: 'advice_type')
   String get adviceType => throw _privateConstructorUsedError; // exercise, diet, hydration, sleep, general
   String get title => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   String? get frequency => throw _privateConstructorUsedError;
-  @JsonKey(name: 'duration_minutes')
+  @JsonKey(name: 'duration_minutes', fromJson: _intFromDynamic)
   int? get durationMinutes => throw _privateConstructorUsedError;
 
   /// Serializes this LifestyleAdvice to a JSON map.
@@ -50,13 +51,15 @@ abstract class $LifestyleAdviceCopyWith<$Res> {
   ) = _$LifestyleAdviceCopyWithImpl<$Res, LifestyleAdvice>;
   @useResult
   $Res call({
-    int id,
-    @JsonKey(name: 'prescription_id') int prescriptionId,
+    @JsonKey(fromJson: _intFromJson) int id,
+    @JsonKey(name: 'prescription_id', fromJson: _intFromJson)
+    int prescriptionId,
     @JsonKey(name: 'advice_type') String adviceType,
     String title,
     String description,
     String? frequency,
-    @JsonKey(name: 'duration_minutes') int? durationMinutes,
+    @JsonKey(name: 'duration_minutes', fromJson: _intFromDynamic)
+    int? durationMinutes,
   });
 }
 
@@ -136,13 +139,15 @@ abstract class _$$LifestyleAdviceImplCopyWith<$Res>
   @override
   @useResult
   $Res call({
-    int id,
-    @JsonKey(name: 'prescription_id') int prescriptionId,
+    @JsonKey(fromJson: _intFromJson) int id,
+    @JsonKey(name: 'prescription_id', fromJson: _intFromJson)
+    int prescriptionId,
     @JsonKey(name: 'advice_type') String adviceType,
     String title,
     String description,
     String? frequency,
-    @JsonKey(name: 'duration_minutes') int? durationMinutes,
+    @JsonKey(name: 'duration_minutes', fromJson: _intFromDynamic)
+    int? durationMinutes,
   });
 }
 
@@ -214,22 +219,25 @@ class __$$LifestyleAdviceImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$LifestyleAdviceImpl implements _LifestyleAdvice {
   const _$LifestyleAdviceImpl({
-    required this.id,
-    @JsonKey(name: 'prescription_id') required this.prescriptionId,
+    @JsonKey(fromJson: _intFromJson) required this.id,
+    @JsonKey(name: 'prescription_id', fromJson: _intFromJson)
+    required this.prescriptionId,
     @JsonKey(name: 'advice_type') required this.adviceType,
     required this.title,
     required this.description,
     this.frequency,
-    @JsonKey(name: 'duration_minutes') this.durationMinutes,
+    @JsonKey(name: 'duration_minutes', fromJson: _intFromDynamic)
+    this.durationMinutes,
   });
 
   factory _$LifestyleAdviceImpl.fromJson(Map<String, dynamic> json) =>
       _$$LifestyleAdviceImplFromJson(json);
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   final int id;
   @override
-  @JsonKey(name: 'prescription_id')
+  @JsonKey(name: 'prescription_id', fromJson: _intFromJson)
   final int prescriptionId;
   @override
   @JsonKey(name: 'advice_type')
@@ -242,7 +250,7 @@ class _$LifestyleAdviceImpl implements _LifestyleAdvice {
   @override
   final String? frequency;
   @override
-  @JsonKey(name: 'duration_minutes')
+  @JsonKey(name: 'duration_minutes', fromJson: _intFromDynamic)
   final int? durationMinutes;
 
   @override
@@ -301,22 +309,25 @@ class _$LifestyleAdviceImpl implements _LifestyleAdvice {
 
 abstract class _LifestyleAdvice implements LifestyleAdvice {
   const factory _LifestyleAdvice({
-    required final int id,
-    @JsonKey(name: 'prescription_id') required final int prescriptionId,
+    @JsonKey(fromJson: _intFromJson) required final int id,
+    @JsonKey(name: 'prescription_id', fromJson: _intFromJson)
+    required final int prescriptionId,
     @JsonKey(name: 'advice_type') required final String adviceType,
     required final String title,
     required final String description,
     final String? frequency,
-    @JsonKey(name: 'duration_minutes') final int? durationMinutes,
+    @JsonKey(name: 'duration_minutes', fromJson: _intFromDynamic)
+    final int? durationMinutes,
   }) = _$LifestyleAdviceImpl;
 
   factory _LifestyleAdvice.fromJson(Map<String, dynamic> json) =
       _$LifestyleAdviceImpl.fromJson;
 
   @override
+  @JsonKey(fromJson: _intFromJson)
   int get id;
   @override
-  @JsonKey(name: 'prescription_id')
+  @JsonKey(name: 'prescription_id', fromJson: _intFromJson)
   int get prescriptionId;
   @override
   @JsonKey(name: 'advice_type')
@@ -328,7 +339,7 @@ abstract class _LifestyleAdvice implements LifestyleAdvice {
   @override
   String? get frequency;
   @override
-  @JsonKey(name: 'duration_minutes')
+  @JsonKey(name: 'duration_minutes', fromJson: _intFromDynamic)
   int? get durationMinutes;
 
   /// Create a copy of LifestyleAdvice

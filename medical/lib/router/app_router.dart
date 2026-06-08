@@ -33,37 +33,48 @@ import '../features/super_admin/presentation/screens/add_hospital_screen.dart';
 import '../features/super_admin/presentation/screens/hospital_detail_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 
-// Temporary screens for routing setup
-class PlaceholderScreen extends StatelessWidget {
-  final String title;
-  const PlaceholderScreen(this.title, {super.key});
-  @override
-  Widget build(BuildContext context) =>
-      Scaffold(appBar: AppBar(title: Text(title)));
-}
+final splashTimerProvider = FutureProvider<void>((ref) async {
+  await Future.delayed(const Duration(seconds: 4));
+});
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authStateProvider);
-
   return GoRouter(
     initialLocation: '/splash',
+    refreshListenable: _RouterRefreshListenable(ref),
     redirect: (context, state) {
+      final authState = ref.read(authStateProvider);
+      final splashTimer = ref.read(splashTimerProvider);
+
       final loggingIn = state.matchedLocation == '/login';
       final inSplash = state.matchedLocation == '/splash';
+      final isSplashReady = !splashTimer.isLoading;
 
       return authState.when(
         data: (user) {
+          // If on splash, stay there until timer is ready.
+          if (inSplash && !isSplashReady) return null;
+
           if (user == null) {
-            return (loggingIn || inSplash) ? null : '/login';
+            return loggingIn ? null : '/login';
           }
 
+          // 2. If logged in and on an entry screen (splash/login), go to the dashboard.
           if (loggingIn || inSplash) {
             return ref.read(authStateProvider.notifier).getInitialRoute(user);
           }
           return null;
         },
-        loading: () => inSplash ? null : '/splash',
-        error: (_, __) => '/login',
+        loading: () {
+          // Don't redirect during background loading states (like signing in)
+          if (loggingIn) return null;
+          if (inSplash) return null;
+          // Fallback for app startup
+          return '/splash';
+        },
+        error: (err, stack) {
+          if (inSplash && !isSplashReady) return null;
+          return loggingIn ? null : '/login';
+        },
       );
     },
     routes: [
@@ -94,9 +105,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/super-admin/hospitals/:id',
-            builder: (context, state) => HospitalDetailScreen(
-              id: int.parse(state.pathParameters['id']!),
-            ),
+            builder:
+                (context, state) => HospitalDetailScreen(
+                  id: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+                ),
           ),
           GoRoute(
             path: '/admin/dashboard',
@@ -120,9 +132,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/admin/patients/:id/assign',
-            builder: (context, state) => AssignPatientScreen(
-              patientId: int.parse(state.pathParameters['id']!),
-            ),
+            builder:
+                (context, state) => AssignPatientScreen(
+                  patientId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+                ),
           ),
           GoRoute(
             path: '/admin/reports',
@@ -150,7 +163,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/patient/medications/:id',
             builder:
                 (context, state) => MedicationDetailScreen(
-                  scheduleId: int.parse(state.pathParameters['id']!),
+                  scheduleId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
                 ),
           ),
           GoRoute(
@@ -161,7 +174,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/patient/prescriptions/:id',
             builder:
                 (context, state) => PrescriptionDetailScreen(
-                  id: int.parse(state.pathParameters['id']!),
+                  id: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
                 ),
           ),
           GoRoute(
@@ -172,7 +185,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/doctor/patients/:id',
             builder:
                 (context, state) => PatientDetailScreen(
-                  patientId: int.parse(state.pathParameters['id']!),
+                  patientId: int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
                 ),
           ),
           GoRoute(
@@ -185,9 +198,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/doctor/prescribe/:patientId',
-            builder: (context, state) => CreatePrescriptionScreen(
-              patientId: int.parse(state.pathParameters['patientId']!),
-            ),
+            builder:
+                (context, state) => CreatePrescriptionScreen(
+                  patientId: int.tryParse(state.pathParameters['patientId'] ?? '') ?? 0,
+                ),
           ),
 
           GoRoute(
@@ -207,3 +221,12 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+/// Helper class to convert Riverpod providers to a Listenable for GoRouter
+class _RouterRefreshListenable extends ChangeNotifier {
+  _RouterRefreshListenable(Ref ref) {
+    // Re-evaluate redirects when auth state changes or splash timer finishes
+    ref.listen(authStateProvider, (_, __) => notifyListeners());
+    ref.listen(splashTimerProvider, (_, __) => notifyListeners());
+  }
+}

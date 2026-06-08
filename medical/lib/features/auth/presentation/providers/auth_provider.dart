@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/user_profile.dart';
 import '../../data/auth_repository.dart';
 
-final authStateProvider = StateNotifierProvider<AuthNotifier, AsyncValue<UserProfile?>>((ref) {
-  return AuthNotifier(ref.read(authRepositoryProvider));
-});
+final authStateProvider =
+    StateNotifierProvider<AuthNotifier, AsyncValue<UserProfile?>>((ref) {
+      return AuthNotifier(ref.read(authRepositoryProvider));
+    });
 
 class AuthNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
   final AuthRepository _repository;
@@ -59,7 +60,7 @@ class AuthNotifier extends StateNotifier<AsyncValue<UserProfile?>> {
   }
 
   String getInitialRoute(UserProfile user) {
-    switch (user.roleName) {
+    switch (user.roleName.trim().toLowerCase()) {
       case 'super_admin':
         return '/super-admin/dashboard';
       case 'hospital_admin':

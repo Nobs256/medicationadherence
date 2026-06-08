@@ -1,0 +1,31 @@
+### MediTrack API - Auth and Dashboard Tests
+
+@baseUrl = https://music.onlineincomehub.org/meditrack-api/api/v1
+
+# IMPORTANT: After a successful login, copy the access_token and refresh_token into these variables.
+# The access_token expires quickly, so you'll need to re-login or refresh often.
+@token = eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL211c2ljLm9ubGluZWluY29tZWh1Yi5vcmcvbWVkaXRyYWNrLWFwaSIsImlhdCI6MTc4MDkxNTk1MiwiZXhwIjoxNzgwOTE2ODUyLCJ1aWQiOiIxIiwicm9sZSI6InN1cGVyX2FkbWluIiwiaGlkIjpudWxsfQ.xQ5WNjajibr4fMb0eUw2-jR4JT8QkfxHDmBn3TCdB1E
+@refreshToken = 20c95a62e5fd3f9311146037a281a9d1560e6e32a67a0935792a068b8f9d3e497a7e108d88b660cc89377afc31f5da0b996ec236ea77a836e34de15a8277a819
+
+### ----------------------------------------------------------------------------------------------------
+### AUTHENTICATION ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+# @name login_super_admin
+### Login as Super Admin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "admin@meditrack.app",
+    "password": "nobert@123"
+}
+
+### ----------------------------------------------------------------------------------------------------
+### DASHBOARD ENDPOINTS
+### ----------------------------------------------------------------------------------------------------
+
+# @name get_super_admin_dashboard
+### Get Super Admin Dashboard Stats
+GET {{baseUrl}}/dashboard
+Authorization: Bearer {{token}}

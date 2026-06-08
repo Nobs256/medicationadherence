@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../core/Database.php';
 
+$processed = 0;
+try {
 $db        = Database::getInstance();
 $yesterday = date('Y-m-d', strtotime('-1 day'));
 
@@ -9,6 +11,7 @@ $stmt = $db->query("SELECT DISTINCT patient_id FROM medication_schedules WHERE D
 $patients = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
 foreach ($patients as $patientId) {
+    try {
     $stmtCount = $db->prepare("
         SELECT
             COUNT(*) AS total,
@@ -20,6 +23,8 @@ foreach ($patients as $patientId) {
     ");
     $stmtCount->execute([$patientId, $yesterday]);
     $counts = $stmtCount->fetch();
+
+    if (!$counts) continue;
 
     $pct = $counts['total'] > 0 ? round(($counts['taken'] / $counts['total']) * 100, 2) : 0;
 
@@ -33,7 +38,16 @@ foreach ($patients as $patientId) {
             total_skipped=VALUES(total_skipped), 
             adherence_percentage=VALUES(adherence_percentage)
     ")->execute([$patientId, $yesterday, $counts['total'], $counts['taken'], $counts['missed'], $counts['skipped'], $pct]);
+
+    $processed++;
+    } catch (Throwable $e) {
+        // Skip failed patient record
+        continue;
+    }
+}
+} catch (Throwable $e) {
+    error_log("Compute Adherence Cron Error: " . $e->getMessage());
 }
 
-echo "[" . date('Y-m-d H:i:s') . "] Adherence computed for " . count($patients) . " patients.\n";
+echo "[" . date('Y-m-d H:i:s') . "] Adherence computed for $processed patients.\n";
 ?>

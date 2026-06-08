@@ -50,10 +50,10 @@ class AdherenceController {
         // Last 7 days overview
         $week = $db->prepare("
             SELECT
-                ROUND(AVG(adherence_percentage), 1)  AS weekly_avg,
-                SUM(total_taken)                      AS weekly_taken,
-                SUM(total_scheduled)                  AS weekly_scheduled,
-                SUM(total_missed)                     AS weekly_missed
+                ROUND(IFNULL(AVG(adherence_percentage), 0), 1) AS weekly_avg,
+                IFNULL(SUM(total_taken), 0)                    AS weekly_taken,
+                IFNULL(SUM(total_scheduled), 0)                AS weekly_scheduled,
+                IFNULL(SUM(total_missed), 0)                   AS weekly_missed
             FROM adherence_logs
             WHERE patient_id = ? AND log_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
         ");
@@ -63,10 +63,10 @@ class AdherenceController {
         // Last 30 days overview
         $month = $db->prepare("
             SELECT
-                ROUND(AVG(adherence_percentage), 1) AS monthly_avg,
-                SUM(total_taken)                     AS monthly_taken,
-                SUM(total_scheduled)                 AS monthly_scheduled,
-                COUNT(CASE WHEN adherence_percentage >= 80 THEN 1 END) AS good_days
+                ROUND(IFNULL(AVG(adherence_percentage), 0), 1) AS monthly_avg,
+                IFNULL(SUM(total_taken), 0)                    AS monthly_taken,
+                IFNULL(SUM(total_scheduled), 0)                AS monthly_scheduled,
+                IFNULL(COUNT(CASE WHEN adherence_percentage >= 80 THEN 1 END), 0) AS good_days
             FROM adherence_logs
             WHERE patient_id = ? AND log_date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
         ");

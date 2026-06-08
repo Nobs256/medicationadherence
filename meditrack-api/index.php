@@ -20,6 +20,16 @@ register_shutdown_function(function() {
     // Only process on actual API requests, not preflight OPTIONS
     if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') return;
 
+    $can_detach = function_exists('fastcgi_finish_request');
+    
+    // On shared hosting (PHP 7.4/LiteSpeed), only run background tasks on 
+    // write actions (POST/PUT/DELETE) if we can detach. 
+    // For GET requests (dashboards), skip unless we can detach to avoid 500 errors.
+    if (!$can_detach && $_SERVER['REQUEST_METHOD'] === 'GET') return;
+    
+    $is_write_action = in_array($_SERVER['REQUEST_METHOD'], ['POST', 'PUT', 'DELETE']);
+    if (!$can_detach && $is_write_action) return;
+
     $cron_dir = __DIR__ . '/cron';
     $lock_file = $cron_dir . '/cron_last_run.json';
     $now = time();
@@ -47,21 +57,25 @@ register_shutdown_function(function() {
     // Background execution optimization: Detach from client
     ignore_user_abort(true);
     set_time_limit(0);
-    if (function_exists('fastcgi_finish_request')) {
-        fastcgi_finish_request(); // Closes connection and sends response to app immediately
-    }
+    
+    if ($can_detach) fastcgi_finish_request(); 
 
     $updated = false;
     foreach ($to_run as $script) {
         if (file_exists("$cron_dir/$script")) {
-            ob_start(); // Prevent script echoes from corrupting any accidental output
-            include "$cron_dir/$script";
-            ob_end_clean();
-            $last_runs[$script] = $now;
-            $updated = true;
+            try {
+                ob_start(); // Prevent script echoes from corrupting any accidental output
+                include "$cron_dir/$script";
+                ob_end_clean();
+                $last_runs[$script] = $now;
+                $updated = true;
+            } catch (Throwable $e) {
+                // Fail silently in background so we don't trigger a 500 error for the user
+                if (ob_get_level() > 0) ob_end_clean();
+            }
         }
     }
-    if ($updated) file_put_contents($lock_file, json_encode($last_runs));
+    if ($updated) @file_put_contents($lock_file, json_encode($last_runs));
 });
 
 $uri    = strtok(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH), '?');
@@ -72,7 +86,12 @@ if ($basePath !== '/' && strpos($uri, $basePath) === 0) {
     $uri = substr($uri, strlen($basePath));
 }
 
-$uri    = preg_replace('#^/api/v1#', '', $uri);
+//$uri    = preg_replace('#^/api/v1#', '', $uri);
+// Handle subdirectory hosting and strip API version prefix
+if (($pos = strpos($uri, '/api/v1')) !== false) {
+    $uri = substr($uri, $pos + 7);
+}
+if (!$uri) $uri = '/';
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Route map: [METHOD, pattern, controller, action, [required_roles]]

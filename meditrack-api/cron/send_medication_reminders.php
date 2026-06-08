@@ -2,6 +2,8 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../core/Database.php';
 
+$processedCount = 0;
+try {
 $db  = Database::getInstance();
 $now = new DateTime();
 $in24h = (clone $now)->modify('+24 hours');
@@ -25,7 +27,10 @@ $stmt = $db->prepare("
 $stmt->execute([$now->format('Y-m-d H:i:s'), $in24h->format('Y-m-d H:i:s')]);
 $schedules = $stmt->fetchAll();
 
+if (!defined('ONESIGNAL_KEY') || !ONESIGNAL_KEY) return;
+
 foreach ($schedules as $s) {
+    try {
     $scheduledTime = new DateTime($s['scheduled_time']);
     $advanceTime   = (clone $scheduledTime)->modify('-2 hours');
     $instructions  = buildInstructions($s);
@@ -53,6 +58,14 @@ foreach ($schedules as $s) {
     );
     $db->prepare("UPDATE medication_schedules SET onesignal_notification_id = ?, reminder_sent_at = NOW() WHERE id = ?")
        ->execute([$dueId, $s['id']]);
+    
+    $processedCount++;
+    } catch (Throwable $e) {
+        continue;
+    }
+}
+} catch (Throwable $e) {
+    error_log("Medication Reminder Cron Error: " . $e->getMessage());
 }
 
 function buildInstructions(array $s): string {
@@ -84,10 +97,10 @@ function sendOneSignalNotification(string $playerId, string $title, string $body
         CURLOPT_POSTFIELDS     => json_encode($payload),
     ]);
     $rawResponse = curl_exec($ch);
-    $result = json_decode($rawResponse, true);
+    $result = $rawResponse ? json_decode($rawResponse, true) : null;
     curl_close($ch);
-    return $result['id'] ?? null;
+    return (is_array($result) && isset($result['id'])) ? (string)$result['id'] : null;
 }
 
-echo "[" . date('Y-m-d H:i:s') . "] Reminders processed: " . count($schedules) . "\n";
+echo "[" . date('Y-m-d H:i:s') . "] Reminders processed: $processedCount\n";
 ?>
