@@ -110,7 +110,7 @@ $routes = [
     ['POST', '/hospitals/{id}/toggle','HospitalController',     'toggle',               ['super_admin']],
 
     // Users management
-    ['GET',  '/users',                'UserController',         'index',                ['super_admin','hospital_admin']],
+    ['GET',  '/users',                'UserController',         'index',                ['super_admin','hospital_admin','doctor']],
     ['POST', '/users',                'UserController',         'store',                ['super_admin','hospital_admin']],
     ['GET',  '/users/{id}',           'UserController',         'show',                 ['super_admin','hospital_admin','doctor']],
     ['PUT',  '/users/{id}',           'UserController',         'update',               ['super_admin','hospital_admin']],

@@ -112,8 +112,9 @@ class AdherenceReportScreen extends ConsumerWidget {
       ),
       child: logsAsync.when(
         data: (logs) {
-          if (logs.isEmpty)
+          if (logs.isEmpty) {
             return const Center(child: Text('No data for this week'));
+          }
 
           return BarChart(
             BarChartData(

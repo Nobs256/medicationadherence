@@ -56,9 +56,13 @@ class UserController {
             LEFT JOIN hospitals h ON h.id = u.hospital_id
             $where ORDER BY u.full_name ASC LIMIT ? OFFSET ?
         ");
-        $params[] = $perPage;
-        $params[] = $offset;
-        $stmt->execute($params);
+
+        foreach ($params as $k => $v) {
+            $stmt->bindValue($k + 1, $v);
+        }
+        $stmt->bindValue(count($params) + 1, (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(count($params) + 2, (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
 
         Response::paginated($stmt->fetchAll(), $count, $page, $perPage);
         } catch (Throwable $e) {

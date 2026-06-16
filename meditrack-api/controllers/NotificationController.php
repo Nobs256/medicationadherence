@@ -33,7 +33,10 @@ class NotificationController {
             ORDER BY n.sent_at DESC
             LIMIT ? OFFSET ?
         ");
-        $stmt->execute([$uid, $perPage, $offset]);
+        $stmt->bindValue(1, $uid);
+        $stmt->bindValue(2, (int)$perPage, PDO::PARAM_INT);
+        $stmt->bindValue(3, (int)$offset, PDO::PARAM_INT);
+        $stmt->execute();
         Response::paginated($stmt->fetchAll(), $count, $page, $perPage);
     }
 
