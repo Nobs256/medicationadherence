@@ -202,8 +202,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 (context, state) => CreatePrescriptionScreen(
                   patientId: int.tryParse(state.pathParameters['patientId'] ?? '') ?? 0,
                 ),
+          ), 
+          GoRoute(
+            path: '/doctor/appointments',
+            builder: (context, state) => const AppointmentsScreen(),
           ),
-
           GoRoute(
             path: '/patient/appointments',
             builder: (context, state) => const AppointmentsScreen(),

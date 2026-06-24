@@ -6,6 +6,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../sharedwidgets/custom_button.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../../core/services/api_service.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -32,13 +33,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _selectedGender = user?.gender;
   }
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _phoneController.dispose();
-    _emergencyContactController.dispose();
-    super.dispose();
-  }
+  // dispose handled later (see updated dispose implementation)
+
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -64,6 +60,46 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         const SnackBar(content: Text('Profile updated successfully')),
       );
     }
+  }
+
+  final _passwordFormKey = GlobalKey<FormState>();
+  final _oldPasswordController = TextEditingController();
+  final _newPasswordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _phoneController.dispose();
+    _emergencyContactController.dispose();
+    _oldPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _changePassword() async {
+    if (!_passwordFormKey.currentState!.validate()) return;
+
+    final api = ref.read(apiServiceProvider);
+    final oldPassword = _oldPasswordController.text;
+    final newPassword = _newPasswordController.text;
+
+    await api.post('/auth/change-password', data: {
+      'old_password': oldPassword,
+      'new_password': newPassword,
+    });
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Password updated successfully')),
+    );
+
+    _oldPasswordController.clear();
+    _newPasswordController.clear();
+    _confirmPasswordController.clear();
+
+    _passwordFormKey.currentState?.reset();
   }
 
   @override
@@ -186,6 +222,57 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ],
               const SizedBox(height: 40),
+              // Change Password (available for all roles)
+              const Divider(height: 32),
+              Text('Change Password', style: AppTextStyles.h2.copyWith(fontSize: 18)),
+              const SizedBox(height: 16),
+              Form(
+                key: _passwordFormKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _oldPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Current Password',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _newPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'New Password',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Confirm New Password',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Required';
+                        if (v != _newPasswordController.text) return 'Passwords do not match';
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    CustomButton(
+                      text: 'Update Password',
+                      onPressed: _changePassword,
+                      isLoading: authState.isLoading,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
               CustomButton(
                 text: 'Save Changes',
                 onPressed: _saveProfile,

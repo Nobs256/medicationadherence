@@ -25,7 +25,7 @@ mixin _$AppNotification {
   String get title => throw _privateConstructorUsedError;
   String get body => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
-  @JsonKey(name: 'reference_id')
+  @JsonKey(name: 'reference_id', fromJson: _intFromAny)
   int? get referenceId => throw _privateConstructorUsedError;
   @JsonKey(name: 'reference_table')
   String? get referenceTable => throw _privateConstructorUsedError;
@@ -58,7 +58,7 @@ abstract class $AppNotificationCopyWith<$Res> {
     String title,
     String body,
     String type,
-    @JsonKey(name: 'reference_id') int? referenceId,
+    @JsonKey(name: 'reference_id', fromJson: _intFromAny) int? referenceId,
     @JsonKey(name: 'reference_table') String? referenceTable,
     @JsonKey(name: 'is_read', fromJson: _boolFromInt) bool isRead,
     @JsonKey(name: 'sent_at') String sentAt,
@@ -158,7 +158,7 @@ abstract class _$$AppNotificationImplCopyWith<$Res>
     String title,
     String body,
     String type,
-    @JsonKey(name: 'reference_id') int? referenceId,
+    @JsonKey(name: 'reference_id', fromJson: _intFromAny) int? referenceId,
     @JsonKey(name: 'reference_table') String? referenceTable,
     @JsonKey(name: 'is_read', fromJson: _boolFromInt) bool isRead,
     @JsonKey(name: 'sent_at') String sentAt,
@@ -250,7 +250,7 @@ class _$AppNotificationImpl implements _AppNotification {
     required this.title,
     required this.body,
     required this.type,
-    @JsonKey(name: 'reference_id') this.referenceId,
+    @JsonKey(name: 'reference_id', fromJson: _intFromAny) this.referenceId,
     @JsonKey(name: 'reference_table') this.referenceTable,
     @JsonKey(name: 'is_read', fromJson: _boolFromInt) required this.isRead,
     @JsonKey(name: 'sent_at') required this.sentAt,
@@ -269,7 +269,7 @@ class _$AppNotificationImpl implements _AppNotification {
   @override
   final String type;
   @override
-  @JsonKey(name: 'reference_id')
+  @JsonKey(name: 'reference_id', fromJson: _intFromAny)
   final int? referenceId;
   @override
   @JsonKey(name: 'reference_table')
@@ -346,7 +346,8 @@ abstract class _AppNotification implements AppNotification {
     required final String title,
     required final String body,
     required final String type,
-    @JsonKey(name: 'reference_id') final int? referenceId,
+    @JsonKey(name: 'reference_id', fromJson: _intFromAny)
+    final int? referenceId,
     @JsonKey(name: 'reference_table') final String? referenceTable,
     @JsonKey(name: 'is_read', fromJson: _boolFromInt)
     required final bool isRead,
@@ -366,7 +367,7 @@ abstract class _AppNotification implements AppNotification {
   @override
   String get type;
   @override
-  @JsonKey(name: 'reference_id')
+  @JsonKey(name: 'reference_id', fromJson: _intFromAny)
   int? get referenceId;
   @override
   @JsonKey(name: 'reference_table')

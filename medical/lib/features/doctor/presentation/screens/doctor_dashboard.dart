@@ -21,21 +21,31 @@ class DoctorDashboard extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        backgroundColor: AppColors.primary,
+        elevation: 0,
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Welcome,', style: AppTextStyles.bodySm),
-            Text('Dr. ${user?.fullName.split(' ').last ?? ''}', style: AppTextStyles.h2),
+            const Text(
+              'Welcome,',
+              style: AppTextStyles.bodySm,
+            ),
+            Text(
+              'Dr. ${user?.fullName.split(' ').last ?? ''}',
+              style: AppTextStyles.h2,
+            ),
           ],
         ),
-        backgroundColor: AppColors.background,
-        elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications_none),
+            icon: const Icon(
+              Icons.notifications_none,
+              color: Colors.white,
+            ),
             onPressed: () => context.push('/notifications'),
           ),
         ],
+        foregroundColor: Colors.white,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -87,7 +97,7 @@ class DoctorDashboard extends ConsumerWidget {
         children: [
           _statCard('Total Patients', stats['patients']?.toString() ?? '0', Icons.people_outline, AppColors.doctorColor),
           _statCard('Appointments', stats['todayAppts']?.toString() ?? '0', Icons.calendar_today, AppColors.info),
-          _statCard('Active Meds', stats['prescriptions']?.toString() ?? '0', Icons.medication_outlined, AppColors.accent),
+          _statCard('Active Medications', stats['prescriptions']?.toString() ?? '0', Icons.medication_outlined, AppColors.accent),
           _statCard('Hospital', user?.hospitalName ?? 'N/A', Icons.local_hospital_outlined, AppColors.adminColor),
         ],
       ),

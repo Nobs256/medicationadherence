@@ -5,8 +5,26 @@ import '../core/constants/app_colors.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 
 class AppShell extends ConsumerWidget {
+  static DateTime? _lastBackPressed;
+
+  String _dashboardRouteForRole(String role) {
+    switch (role) {
+      case 'patient':
+        return '/patient/dashboard';
+      case 'doctor':
+        return '/doctor/dashboard';
+      case 'hospital_admin':
+        return '/admin/dashboard';
+      case 'super_admin':
+        return '/super-admin/dashboard';
+      default:
+        return '';
+    }
+  }
+
   final Widget child;
   const AppShell({super.key, required this.child});
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,9 +34,36 @@ class AppShell extends ConsumerWidget {
     final role = user.roleName;
     final tabs = _getTabsForRole(role);
 
-    return Scaffold(
-      body: child,
-      bottomNavigationBar: BottomNavigationBar(
+    return WillPopScope(
+      onWillPop: () async {
+        final String location = GoRouterState.of(context).matchedLocation;
+        final String dashboardRoute = _dashboardRouteForRole(role);
+
+        // If route is unknown, avoid forcing navigation.
+        if (dashboardRoute.isEmpty) return false;
+
+        // If user is on dashboard -> double-tap to exit.
+        if (location.startsWith(dashboardRoute)) {
+          final now = DateTime.now();
+          final last = _lastBackPressed;
+          _lastBackPressed = now;
+          if (last != null && now.difference(last) <= const Duration(seconds: 2)) {
+            // let system handle exit
+            return true;
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Press back again to exit')),
+          );
+          return false;
+        }
+
+        // If not on dashboard -> go to dashboard.
+        context.go(dashboardRoute);
+        return false;
+      },
+      child: Scaffold(
+        body: child,
+        bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         currentIndex: _calculateSelectedIndex(context, tabs),
         onTap: (index) => context.go(tabs[index].route),
@@ -34,7 +79,7 @@ class AppShell extends ConsumerWidget {
                 )
                 .toList(),
       ),
-    );
+    ));
   }
 
   int _calculateSelectedIndex(BuildContext context, List<NavTab> tabs) {
@@ -62,9 +107,14 @@ class AppShell extends ConsumerWidget {
             route: '/patient/schedule',
           ),
           const NavTab(
-            label: 'Adherence',
+            label: 'Appointments',
+            icon: Icons.people_outline_rounded,
+            route: '/patient/appointments',
+          ),
+          const NavTab(
+            label: 'Life Style',
             icon: Icons.bar_chart_rounded,
-            route: '/patient/adherence',
+            route: '/patient/lifestyle',
           ),
           const NavTab(
             label: 'Profile',
@@ -83,6 +133,11 @@ class AppShell extends ConsumerWidget {
             label: 'Patients',
             icon: Icons.people_outline_rounded,
             route: '/doctor/patients',
+          ),
+          const NavTab(
+            label: 'Appointments',
+            icon: Icons.people_outline_rounded,
+            route: '/doctor/appointments',
           ),
           const NavTab(
             label: 'Profile',

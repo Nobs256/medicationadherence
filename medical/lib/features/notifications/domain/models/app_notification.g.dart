@@ -13,7 +13,7 @@ _$AppNotificationImpl _$$AppNotificationImplFromJson(
   title: json['title'] as String,
   body: json['body'] as String,
   type: json['type'] as String,
-  referenceId: (json['reference_id'] as num?)?.toInt(),
+  referenceId: _intFromAny(json['reference_id']),
   referenceTable: json['reference_table'] as String?,
   isRead: _boolFromInt(json['is_read']),
   sentAt: json['sent_at'] as String,

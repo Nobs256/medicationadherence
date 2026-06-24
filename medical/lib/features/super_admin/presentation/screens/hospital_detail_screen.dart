@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../sharedwidgets/status_badge.dart';
@@ -39,25 +40,48 @@ class HospitalDetailScreen extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 32),
-              const Text('Facility Stats', style: AppTextStyles.h3),
+              const Text('Facility Statistics', style: AppTextStyles.h3),
               const SizedBox(height: 16),
-              _DetailRow('Doctors', h.doctorCount?.toString() ?? '0'),
-              _DetailRow('Patients', h.patientCount?.toString() ?? '0'),
-              _DetailRow('Avg Adherence', '${h.avgAdherence ?? 0}%'),
+              _DetailRow('Doctors', (h.doctorCount ?? 0).toString()),
+              _DetailRow('Patients', (h.patientCount ?? 0).toString()),
+              _DetailRow('Average Adherence', '${(h.avgAdherence ?? 0).toString()}%'),
               const SizedBox(height: 32),
               const Text('Contact Information', style: AppTextStyles.h3),
               const SizedBox(height: 16),
               _DetailRow('Email', h.email ?? 'Not set'),
               _DetailRow('Phone', h.phone ?? 'Not set'),
               _DetailRow('Address', h.address ?? 'Not set'),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () => ref.read(hospitalActionsProvider.notifier).toggleHospital(h.id),
-                  style: OutlinedButton.styleFrom(foregroundColor: h.isActive ? AppColors.error : AppColors.success),
-                  child: Text(h.isActive ? 'Deactivate Hospital' : 'Activate Hospital'),
-                ),
+              const SizedBox(height: 32),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: () => ref.read(hospitalActionsProvider.notifier).toggleHospital(h.id),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor:
+                              h.isActive ? AppColors.error : AppColors.success,
+                        ),
+                        child: Text(h.isActive ? 'Deactivate Hospital' : 'Activate Hospital'),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => context.push('/super-admin/hospitals/${h.id}/admins'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: const Text('Manage Admins'),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

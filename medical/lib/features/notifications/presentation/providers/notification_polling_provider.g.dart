@@ -7,7 +7,7 @@ part of 'notification_polling_provider.dart';
 // **************************************************************************
 
 String _$unreadNotificationCountHash() =>
-    r'bde735e1f91960086aba5c7c7c65ba4f9203a8a9';
+    r'47affb81512c47dd4dab454717746b777926b7f8';
 
 /// See also [unreadNotificationCount].
 @ProviderFor(unreadNotificationCount)

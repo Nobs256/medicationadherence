@@ -16,9 +16,13 @@ class SuperAdminDashboard extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('MediTrack System Admin', style: AppTextStyles.h2),
-        backgroundColor: AppColors.background,
+        title: const Text(
+          'MediTrack System Admin',
+          style: AppTextStyles.h2,
+        ),
+        backgroundColor: AppColors.primary,
         elevation: 0,
+        foregroundColor: Colors.white,
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(superAdminStatsProvider.future),
@@ -38,8 +42,8 @@ class SuperAdminDashboard extends ConsumerWidget {
                   children: [
                     _StatCard('Hospitals', stats['hospitals']?.toString() ?? '0', Icons.business_rounded, AppColors.superAdminColor),
                     _StatCard('Total Users', stats['users']?.toString() ?? '0', Icons.people_rounded, AppColors.primary),
-                    _StatCard('Active Meds', stats['prescriptions']?.toString() ?? '0', Icons.medication_rounded, AppColors.success),
-                    _StatCard('Avg Adherence', '${stats['adherence'] ?? 0}%', Icons.analytics_rounded, AppColors.accent),
+                    _StatCard('Active Medication', stats['prescriptions']?.toString() ?? '0', Icons.medication_rounded, AppColors.success),
+                    _StatCard('Average Adherence', '${stats['adherence'] ?? 0}%', Icons.analytics_rounded, AppColors.accent),
                   ],
                 ),
                 loading: () => const LoadingShimmer(height: 200),

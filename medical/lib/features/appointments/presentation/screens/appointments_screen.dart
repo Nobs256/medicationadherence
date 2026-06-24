@@ -1,19 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../sharedwidgets/loading_shimmer.dart';
 import '../../../../sharedwidgets/status_badge.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../patient/presentation/providers/patient_provider.dart';
 import '../../domain/models/appointment.dart';
+import '../providers/appointment_provider.dart';
 
 class AppointmentsScreen extends ConsumerWidget {
   const AppointmentsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final appointmentsAsync = ref.watch(patientAppointmentsProvider);
+    final role = ref.watch(authStateProvider).maybeWhen(
+          data: (u) => u?.roleName,
+          orElse: () => null,
+        );
+
+    final appointmentsAsync = role == 'doctor'
+        ? ref.watch(appointmentsProvider())
+        : ref.watch(patientAppointmentsProvider);
 
     return DefaultTabController(
       length: 2,
@@ -36,19 +46,27 @@ class AppointmentsScreen extends ConsumerWidget {
         body: appointmentsAsync.when(
           data: (appointments) {
             final now = DateTime.now();
-            final upcoming = appointments.where((a) {
-              final date = DateTime.parse(a.appointmentDate);
-              return date.isAfter(now) || a.status == 'scheduled';
-            }).toList();
-            final past = appointments.where((a) {
-              final date = DateTime.parse(a.appointmentDate);
-              return date.isBefore(now) && a.status != 'scheduled';
-            }).toList();
+            final upcoming = appointments
+                .where((a) =>
+                    DateTime.parse(a.appointmentDate).isAfter(now) ||
+                    a.status == 'scheduled')
+                .toList();
+            final past = appointments
+                .where((a) =>
+                    DateTime.parse(a.appointmentDate).isBefore(now) &&
+                    a.status != 'scheduled')
+                .toList();
 
             return TabBarView(
               children: [
-                _AppointmentList(appointments: upcoming, emptyMsg: 'No upcoming appointments'),
-                _AppointmentList(appointments: past, emptyMsg: 'No past appointments'),
+                _AppointmentList(
+                  appointments: upcoming,
+                  emptyMsg: 'No upcoming appointments',
+                ),
+                _AppointmentList(
+                  appointments: past,
+                  emptyMsg: 'No past appointments',
+                ),
               ],
             );
           },
@@ -66,7 +84,11 @@ class AppointmentsScreen extends ConsumerWidget {
 class _AppointmentList extends StatelessWidget {
   final List<Appointment> appointments;
   final String emptyMsg;
-  const _AppointmentList({required this.appointments, required this.emptyMsg});
+
+  const _AppointmentList({
+    required this.appointments,
+    required this.emptyMsg,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -99,20 +121,34 @@ class _AppointmentList extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(DateFormat('MMM').format(date).toUpperCase(), style: AppTextStyles.label.copyWith(fontSize: 10)),
-                  Text(DateFormat('dd').format(date), style: AppTextStyles.h3),
+                  Text(
+                    DateFormat('MMM').format(date).toUpperCase(),
+                    style: AppTextStyles.label.copyWith(fontSize: 10),
+                  ),
+                  Text(
+                    DateFormat('dd').format(date),
+                    style: AppTextStyles.h3,
+                  ),
                 ],
               ),
             ),
-            title: Text(a.purpose, style: AppTextStyles.h3.copyWith(fontSize: 16)),
+            title:
+                Text(a.purpose, style: AppTextStyles.h3.copyWith(fontSize: 16)),
             subtitle: Padding(
               padding: const EdgeInsets.only(top: 4.0),
-              child: Text('Dr. ${a.doctorName ?? 'General Practitioner'}\n${DateFormat('h:mm a').format(date)}'),
+              child: Text(
+                'Dr. ${a.doctorName ?? 'General Practitioner'}\n${DateFormat('h:mm a').format(date)}',
+              ),
             ),
-            trailing: StatusBadge(label: a.status.toUpperCase(), color: a.status == 'scheduled' ? AppColors.info : AppColors.textMuted),
+            trailing: StatusBadge(
+              label: a.status.toUpperCase(),
+              color:
+                  a.status == 'scheduled' ? AppColors.info : AppColors.textMuted,
+            ),
           ),
         );
       },
     );
   }
 }
+

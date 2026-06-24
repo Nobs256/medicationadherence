@@ -5,6 +5,14 @@ import 'dart:async';
 
 part 'notification_polling_provider.g.dart';
 
+int _intFromAny(dynamic val) {
+  if (val == null) return 0;
+  if (val is int) return val;
+  if (val is num) return val.toInt();
+  if (val is String) return int.tryParse(val) ?? 0;
+  return 0;
+}
+
 @riverpod
 Stream<int> unreadNotificationCount(UnreadNotificationCountRef ref) async* {
   final api = ref.read(apiServiceProvider);
@@ -12,7 +20,7 @@ Stream<int> unreadNotificationCount(UnreadNotificationCountRef ref) async* {
   // Immediate first fetch
   try {
     final res = await api.get('/notifications/unread-count');
-    yield (res['data']['count'] as int?) ?? 0;
+    yield _intFromAny(res['data']['count']);
   } catch (_) {
     yield 0;
   }
@@ -21,7 +29,7 @@ Stream<int> unreadNotificationCount(UnreadNotificationCountRef ref) async* {
   yield* Stream.periodic(const Duration(seconds: 30)).asyncMap((_) async {
     try {
       final res = await api.get('/notifications/unread-count');
-      return (res['data']['count'] as int?) ?? 0;
+      return _intFromAny(res['data']['count']);
     } catch (_) {
       return 0;
     }

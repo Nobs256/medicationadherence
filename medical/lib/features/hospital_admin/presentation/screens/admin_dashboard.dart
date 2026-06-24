@@ -5,6 +5,8 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../sharedwidgets/loading_shimmer.dart';
 import '../providers/hospital_provider.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+
 
 class AdminDashboard extends ConsumerWidget {
   const AdminDashboard({super.key});
@@ -12,13 +14,18 @@ class AdminDashboard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final statsAsync = ref.watch(adminStatsProvider);
+    final user = ref.watch(authStateProvider).value;
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Hospital Admin', style: AppTextStyles.h2),
-        backgroundColor: AppColors.background,
+        title: const Text(
+          'Hospital Admin',
+          style: AppTextStyles.h2,
+        ),
+        backgroundColor: AppColors.primary,
         elevation: 0,
+        foregroundColor: Colors.white,
       ),
       body: RefreshIndicator(
         onRefresh: () => ref.refresh(adminStatsProvider.future),
@@ -27,26 +34,52 @@ class AdminDashboard extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              const SizedBox(height: 0),
+
+              const SizedBox(height: 24),
               statsAsync.when(
-                data: (stats) => GridView.count(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 1.5,
-                  children: [
-                    _StatCard('Doctors', stats['doctors']?.toString() ?? '0', Icons.medical_services_outlined, AppColors.doctorColor),
-                    _StatCard('Patients', stats['patients']?.toString() ?? '0', Icons.people_outline, AppColors.patientColor),
-                    _StatCard('Adherence', '${stats['avg_adherence'] ?? 0}%', Icons.analytics_outlined, AppColors.primary),
-                    _StatCard('Reports', 'View', Icons.description_outlined, AppColors.accent),
-                  ],
-                ),
+                data:
+                    (stats) => GridView.count(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 16,
+                      crossAxisSpacing: 16,
+                      childAspectRatio: 1.5,
+                      children: [
+                        _StatCard(
+                          'Doctors',
+                          stats['doctors']?.toString() ?? '0',
+                          Icons.medical_services_outlined,
+                          AppColors.doctorColor,
+                        ),
+                        _StatCard(
+                          'Patients',
+                          stats['patients']?.toString() ?? '0',
+                          Icons.people_outline,
+                          AppColors.patientColor,
+                        ),
+                        _StatCard(
+                          'Adherence',
+                          '${stats['avg_adherence'] ?? 0}%',
+                          Icons.analytics_outlined,
+                          AppColors.primary,
+                        ),
+                        _StatCard(
+                          'Reports',
+                          'View',
+                          Icons.description_outlined,
+                          AppColors.accent,
+                        ),
+                      ],
+                    ),
                 loading: () => const LoadingShimmer(height: 200),
-                error: (e, __) => const Center(child: Text('Error loading stats')),
+                error:
+                    (e, __) => const Center(child: Text('Error loading stats')),
               ),
               const SizedBox(height: 32),
               const Text('Quick Actions', style: AppTextStyles.h3),
+
               const SizedBox(height: 16),
               _QuickActionTile(
                 title: 'Manage Doctors',
@@ -76,7 +109,11 @@ class AdminDashboard extends ConsumerWidget {
   Widget _StatCard(String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), border: Border.all(color: AppColors.border)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -92,7 +129,29 @@ class AdminDashboard extends ConsumerWidget {
 }
 
 class _QuickActionTile extends StatelessWidget {
-  final String title, subtitle; final IconData icon; final VoidCallback onTap;
-  const _QuickActionTile({required this.title, required this.subtitle, required this.icon, required this.onTap});
-  @override Widget build(BuildContext context) => Card(margin: const EdgeInsets.only(bottom: 12), elevation: 0, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: AppColors.border)), child: ListTile(leading: Icon(icon, color: AppColors.primary), title: Text(title, style: AppTextStyles.h3.copyWith(fontSize: 16)), subtitle: Text(subtitle), trailing: const Icon(Icons.chevron_right), onTap: onTap));
+  final String title, subtitle;
+  final IconData icon;
+  final VoidCallback onTap;
+  const _QuickActionTile({
+    required this.title,
+    required this.subtitle,
+    required this.icon,
+    required this.onTap,
+  });
+  @override
+  Widget build(BuildContext context) => Card(
+    margin: const EdgeInsets.only(bottom: 12),
+    elevation: 0,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+      side: const BorderSide(color: AppColors.border),
+    ),
+    child: ListTile(
+      leading: Icon(icon, color: AppColors.primary),
+      title: Text(title, style: AppTextStyles.h3.copyWith(fontSize: 16)),
+      subtitle: Text(subtitle),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: onTap,
+    ),
+  );
 }
