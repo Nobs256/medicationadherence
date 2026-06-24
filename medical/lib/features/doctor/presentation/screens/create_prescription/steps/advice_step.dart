@@ -54,7 +54,7 @@ class AdviceStep extends StatelessWidget {
                   leading: CircleAvatar(
                     backgroundColor: AppColors.primaryLight,
                     child: Icon(
-                      _getIcon(item['type']),
+                      _getIcon(item['advice_type'] ?? 'general'),
                       color: AppColors.primary,
                       size: 20,
                     ),
@@ -185,7 +185,7 @@ class _AddAdviceFormState extends State<_AddAdviceForm> {
             onPressed: () {
               if (_titleController.text.isEmpty) return;
               widget.onAdd({
-                'type': _type,
+                'advice_type': _type,
                 'title': _titleController.text,
                 'description': _descController.text,
               });

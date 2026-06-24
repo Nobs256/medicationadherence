@@ -6,7 +6,7 @@ part of 'hospital_admins_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$hospitalAdminsHash() => r'95e4ab60a1b129ab91cf8181c8c6474bcdcbc48b';
+String _$hospitalAdminsHash() => r'ed558c1e08f009a2d4e2567dd39f2a5223033320';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -34,7 +34,7 @@ class _SystemHash {
 const hospitalAdminsProvider = HospitalAdminsFamily();
 
 /// See also [hospitalAdmins].
-class HospitalAdminsFamily extends Family<AsyncValue<List<HospitalAdmin>>> {
+class HospitalAdminsFamily extends Family<AsyncValue<List<UserProfile>>> {
   /// See also [hospitalAdmins].
   const HospitalAdminsFamily();
 
@@ -67,7 +67,7 @@ class HospitalAdminsFamily extends Family<AsyncValue<List<HospitalAdmin>>> {
 
 /// See also [hospitalAdmins].
 class HospitalAdminsProvider
-    extends AutoDisposeFutureProvider<List<HospitalAdmin>> {
+    extends AutoDisposeFutureProvider<List<UserProfile>> {
   /// See also [hospitalAdmins].
   HospitalAdminsProvider(int hospitalId)
     : this._internal(
@@ -98,7 +98,7 @@ class HospitalAdminsProvider
 
   @override
   Override overrideWith(
-    FutureOr<List<HospitalAdmin>> Function(HospitalAdminsRef provider) create,
+    FutureOr<List<UserProfile>> Function(HospitalAdminsRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -115,7 +115,7 @@ class HospitalAdminsProvider
   }
 
   @override
-  AutoDisposeFutureProviderElement<List<HospitalAdmin>> createElement() {
+  AutoDisposeFutureProviderElement<List<UserProfile>> createElement() {
     return _HospitalAdminsProviderElement(this);
   }
 
@@ -135,13 +135,13 @@ class HospitalAdminsProvider
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin HospitalAdminsRef on AutoDisposeFutureProviderRef<List<HospitalAdmin>> {
+mixin HospitalAdminsRef on AutoDisposeFutureProviderRef<List<UserProfile>> {
   /// The parameter `hospitalId` of this provider.
   int get hospitalId;
 }
 
 class _HospitalAdminsProviderElement
-    extends AutoDisposeFutureProviderElement<List<HospitalAdmin>>
+    extends AutoDisposeFutureProviderElement<List<UserProfile>>
     with HospitalAdminsRef {
   _HospitalAdminsProviderElement(super.provider);
 
@@ -150,7 +150,7 @@ class _HospitalAdminsProviderElement
 }
 
 String _$hospitalAdminActionsHash() =>
-    r'51523e0325df5f3995c7e55ce6310bdf30899910';
+    r'd324a4a916f6372f22f2a247098046df04332da5';
 
 /// See also [HospitalAdminActions].
 @ProviderFor(HospitalAdminActions)

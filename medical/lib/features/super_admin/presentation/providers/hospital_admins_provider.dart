@@ -1,29 +1,22 @@
-import 'dart:io';
-
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import '../../../../core/services/api_service.dart';
-import '../../domain/models/user.dart';
+import '../../../auth/domain/models/user_profile.dart';
 
 part 'hospital_admins_provider.g.dart';
 
-
 @riverpod
-Future<List<HospitalAdmin>> hospitalAdmins(HospitalAdminsRef ref, int hospitalId) async {
+Future<List<UserProfile>> hospitalAdmins(
+  HospitalAdminsRef ref,
+  int hospitalId,
+) async {
   final api = ref.watch(apiServiceProvider);
-
-
-  final json = await api.get(
+  final response = await api.get(
     '/users',
-    params: {
-      'role': 'hospital_admin',
-      'hospital_id': hospitalId,
-    },
+    params: {'role': 'hospital_admin', 'hospital_id': hospitalId},
   );
-
-  final List<dynamic> data = json['data'] ?? [];
+  final List<dynamic> data = response['data']?['data'] as List<dynamic>? ?? [];
   return data
-      .map((e) => HospitalAdmin.fromJson(e as Map<String, dynamic>))
+      .map((json) => UserProfile.fromJson(json as Map<String, dynamic>))
       .toList();
 }
 
@@ -32,36 +25,37 @@ class HospitalAdminActions extends _$HospitalAdminActions {
   @override
   AsyncValue<void> build() => const AsyncValue.data(null);
 
-  Future<void> createHospitalAdmin({
+  Future<Map<String, dynamic>?> createHospitalAdmin({
     required int hospitalId,
     required String fullName,
     required String email,
-    String? phone,
+    required String phone,
+    required String password,
   }) async {
     state = const AsyncValue.loading();
-
+    Map<String, dynamic>? result;
     state = await AsyncValue.guard(() async {
       final api = ref.read(apiServiceProvider);
-      await api.post(
+      final response = await api.post(
         '/users',
         data: {
+          'hospital_id': hospitalId,
           'full_name': fullName,
           'email': email,
+          'phone': phone,
           'role': 'hospital_admin',
-          'hospital_id': hospitalId,
-          'phone': phone ?? '',
+          'password': password,
         },
       );
+      result = response['data'] as Map<String, dynamic>?;
+      ref.invalidate(hospitalAdminsProvider(hospitalId));
     });
-
-    ref.invalidate(hospitalAdminsProvider(hospitalId));
+    return result;
   }
 
-  Future<void> toggleAdmin(int userId, int hospitalId) async {
+  Future<void> toggleAdmin(int adminId, int hospitalId) async {
     final api = ref.read(apiServiceProvider);
-    await api.post('/users/$userId/toggle');
+    await api.post('/users/$adminId/toggle');
     ref.invalidate(hospitalAdminsProvider(hospitalId));
   }
 }
-
-

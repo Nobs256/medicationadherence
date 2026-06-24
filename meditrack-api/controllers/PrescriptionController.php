@@ -93,7 +93,7 @@ class PrescriptionController {
             // 3. Insert lifestyle advice
             foreach ($body['lifestyle_advice'] ?? [] as $advice) {
                 $db->prepare("INSERT INTO lifestyle_advice (prescription_id, advice_type, title, description, frequency, duration_minutes) VALUES (?,?,?,?,?,?)")
-                   ->execute([$prescriptionId, $advice['type'], sanitize($advice['title']), sanitize($advice['description']), sanitize($advice['frequency'] ?? null), $advice['duration_minutes'] ?? null]);
+                   ->execute([$prescriptionId, $advice['advice_type'], sanitize($advice['title']), sanitize($advice['description']), sanitize($advice['frequency'] ?? null), $advice['duration_minutes'] ?? null]);
             }
 
             // 4. Send in-app notification to patient
@@ -173,7 +173,28 @@ class PrescriptionController {
             ORDER BY p.is_active DESC, p.created_at DESC
         ");
         $stmt->execute([$this->auth['uid']]);
-        Response::json($stmt->fetchAll());
+        $prescriptions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $adviceStmt = $db->prepare("SELECT * FROM lifestyle_advice WHERE prescription_id = ? ORDER BY id ASC");
+
+        foreach ($prescriptions as &$p) {
+            // Cast types to ensure correct JSON representation
+            $p['id'] = (int)$p['id'];
+            $p['is_active'] = (bool)$p['is_active'];
+
+            $adviceStmt->execute([$p['id']]);
+            $advices = $adviceStmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Also cast types for advice items
+            foreach ($advices as &$a) {
+                $a['id'] = (int)$a['id'];
+                $a['prescription_id'] = (int)$a['prescription_id'];
+                $a['duration_minutes'] = isset($a['duration_minutes']) ? (int)$a['duration_minutes'] : null;
+            }
+            $p['lifestyle_advice'] = $advices;
+        }
+
+        Response::json($prescriptions);
         } catch (Throwable $e) {
             Response::error('Fetch Error: ' . $e->getMessage(), 500);
         }

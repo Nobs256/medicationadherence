@@ -42,10 +42,29 @@ class _ManagePatientsScreenState extends ConsumerState<ManagePatientsScreen> {
                       margin: const EdgeInsets.only(bottom: 12),
                       elevation: 0,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: const BorderSide(color: AppColors.border)),
-                      child: ListTile(
-                        title: Text(p.fullName, style: AppTextStyles.h3.copyWith(fontSize: 16)),
-                        subtitle: Text(p.diagnosis ?? 'General Checkup'),
-                        trailing: IconButton(icon: const Icon(Icons.assignment_ind_outlined), onPressed: () => context.push('/admin/patients/${p.id}/assign')),
+                      child: Opacity(
+                        opacity: p.isActive ? 1.0 : 0.6,
+                        child: ListTile(
+                          onTap: () => context.push('/doctor/patients/${p.id}'),
+                          leading: CircleAvatar(
+                              backgroundColor: AppColors.patientColor.withOpacity(0.2),
+                              child: Text(p.fullName.isNotEmpty ? p.fullName[0].toUpperCase() : '?',
+                                  style: const TextStyle(color: AppColors.patientColor))),
+                          title: Text(p.fullName, style: AppTextStyles.h3.copyWith(fontSize: 16)),
+                          subtitle: Text(p.diagnosis ?? 'No diagnosis'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                  icon: const Icon(Icons.assignment_ind_outlined),
+                                  tooltip: 'Assign Doctor',
+                                  onPressed: () => context.push('/admin/patients/${p.id}/assign')),
+                              Switch(
+                                  value: p.isActive,
+                                  onChanged: (_) => ref.read(hospitalActionsProvider.notifier).toggleUserActive(p.id).then((_) => ref.invalidate(hospitalPatientsProvider))),
+                            ],
+                          ),
+                        ),
                       ),
                     );
                   },

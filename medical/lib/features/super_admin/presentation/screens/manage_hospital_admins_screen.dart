@@ -130,7 +130,7 @@ class _ManageHospitalAdminsScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Register Hospital Admin', style: AppTextStyles.h3),
+                  const Text('Register Hospital Admin', style: AppTextStyles.h3),
                   const SizedBox(height: 12),
                   TextFormField(
                     controller: _nameController,
@@ -169,22 +169,41 @@ class _ManageHospitalAdminsScreenState
                           actionsState.isLoading
                               ? null
                               : () async {
+                                // NOTE: The 'createHospitalAdmin' method in the provider
+                                // should be updated to return `Future<Map<String, dynamic>?>`
+                                // containing the API response.
                                 if (!_formKey.currentState!.validate()) return;
-                                await ref
+                                final result = await ref
                                     .read(hospitalAdminActionsProvider.notifier)
                                     .createHospitalAdmin(
                                       hospitalId: widget.hospitalId,
                                       fullName: _nameController.text.trim(),
                                       email: _emailController.text.trim(),
                                       phone: _phoneController.text.trim(),
+                                      password: '123456',
                                     );
-                                if (mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                        'Hospital admin registered successfully',
-                                      ),
-                                    ),
+                                if (mounted && result != null) {
+                                  await showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder:
+                                        (dialogContext) => AlertDialog(
+                                          title: const Text('Admin Registered'),
+                                          content: SelectableText(
+                                            'An admin account for ${_nameController.text.trim()} has been created.\n\n'
+                                            'Temporary Password: ${result['temporary_password']}',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed:
+                                                  () =>
+                                                      Navigator.of(
+                                                        dialogContext,
+                                                      ).pop(),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        ),
                                   );
                                   _nameController.clear();
                                   _emailController.clear();

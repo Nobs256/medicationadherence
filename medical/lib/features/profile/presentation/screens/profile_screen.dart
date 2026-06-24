@@ -33,9 +33,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _selectedGender = user?.gender;
   }
 
-  // dispose handled later (see updated dispose implementation)
-
-
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.gallery);
@@ -67,6 +64,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  bool _isUpdatingPassword = false;
+  String? _oldPasswordError;
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -78,28 +78,124 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _changePassword() async {
-    if (!_passwordFormKey.currentState!.validate()) return;
-
-    final api = ref.read(apiServiceProvider);
-    final oldPassword = _oldPasswordController.text;
-    final newPassword = _newPasswordController.text;
-
-    await api.post('/auth/change-password', data: {
-      'old_password': oldPassword,
-      'new_password': newPassword,
-    });
-
-    if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Password updated successfully')),
-    );
-
+  Future<void> _showChangePasswordDialog() async {
+    // Reset state before showing dialog
+    _passwordFormKey.currentState?.reset();
     _oldPasswordController.clear();
     _newPasswordController.clear();
     _confirmPasswordController.clear();
+    setState(() {
+      _oldPasswordError = null;
+    });
 
-    _passwordFormKey.currentState?.reset();
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, dialogSetState) {
+            return AlertDialog(
+              title: const Text('Change Password'),
+              content: Form(
+                key: _passwordFormKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextFormField(
+                      controller: _oldPasswordController,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: 'Current Password',
+                        border: const OutlineInputBorder(),
+                        errorText: _oldPasswordError,
+                      ),
+                      validator: (v) =>
+                          (v == null || v.isEmpty) ? 'Required' : null,
+                      onChanged: (_) {
+                        if (_oldPasswordError != null) {
+                          dialogSetState(() {
+                            _oldPasswordError = null;
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _newPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'New Password',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (v) =>
+                          (v == null || v.isEmpty) ? 'Required' : null,
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: _confirmPasswordController,
+                      obscureText: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Confirm New Password',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (v) {
+                        if (v == null || v.isEmpty) return 'Required';
+                        if (v != _newPasswordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+                CustomButton(
+                  text: 'Update Password',
+                  onPressed: () => _changePassword(dialogSetState),
+                  isLoading: _isUpdatingPassword,
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _changePassword(StateSetter dialogSetState) async {
+    dialogSetState(() => _oldPasswordError = null);
+    if (!_passwordFormKey.currentState!.validate()) return;
+
+    dialogSetState(() => _isUpdatingPassword = true);
+
+    try {
+      final api = ref.read(apiServiceProvider);
+      await api.post('/auth/change-password', data: {
+        'old_password': _oldPasswordController.text,
+        'new_password': _newPasswordController.text,
+      });
+
+      if (!mounted) return;
+      Navigator.of(context).pop(); // Close dialog on success
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Password updated successfully')),
+      );
+    } catch (e) {
+      if (mounted) {
+        // Assume any error from this endpoint is a wrong password.
+        dialogSetState(() => _oldPasswordError = 'Incorrect current password.');
+      }
+    } finally {
+      if (mounted) {
+        dialogSetState(() => _isUpdatingPassword = false);
+      }
+    }
   }
 
   @override
@@ -173,6 +269,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               const SizedBox(height: 32),
               TextFormField(
                 controller: _nameController,
+                enabled: false,
                 decoration: const InputDecoration(
                   labelText: 'Full Name',
                   border: OutlineInputBorder(),
@@ -210,6 +307,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   border: OutlineInputBorder(),
                 ),
               ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: _showChangePasswordDialog,
+                  child: const Text('Change Password?'),
+                ),
+              ),
               if (user.roleName == 'patient' && user.diagnosis != null) ...[
                 const SizedBox(height: 20),
                 TextFormField(
@@ -222,57 +326,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
               ],
               const SizedBox(height: 40),
-              // Change Password (available for all roles)
-              const Divider(height: 32),
-              Text('Change Password', style: AppTextStyles.h2.copyWith(fontSize: 18)),
-              const SizedBox(height: 16),
-              Form(
-                key: _passwordFormKey,
-                child: Column(
-                  children: [
-                    TextFormField(
-                      controller: _oldPasswordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Current Password',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _newPasswordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'New Password',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (v) => (v == null || v.isEmpty) ? 'Required' : null,
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: _confirmPasswordController,
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Confirm New Password',
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (v) {
-                        if (v == null || v.isEmpty) return 'Required';
-                        if (v != _newPasswordController.text) return 'Passwords do not match';
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    CustomButton(
-                      text: 'Update Password',
-                      onPressed: _changePassword,
-                      isLoading: authState.isLoading,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
               CustomButton(
                 text: 'Save Changes',
                 onPressed: _saveProfile,

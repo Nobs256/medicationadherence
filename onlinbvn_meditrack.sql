@@ -67,11 +67,14 @@ CREATE TABLE `appointments` (
   `appointment_date` datetime NOT NULL,
   `purpose` text DEFAULT NULL,
   `notes` text DEFAULT NULL,
-  `status` enum('scheduled','completed','cancelled','rescheduled') DEFAULT 'scheduled',
+  `status` enum('scheduled','completed','cancelled','rescheduled','requested','rejected') DEFAULT 'scheduled',
   `reminder_sent` tinyint(1) DEFAULT 0,
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+-- ALTER TABLE appointments
+-- MODIFY COLUMN `status` ENUM('scheduled','completed','cancelled','rescheduled','requested','rejected')
+-- DEFAULT 'scheduled';
 
 --
 -- Dumping data for table `appointments`

@@ -231,12 +231,12 @@ final patientAppointmentsProvider =
 typedef PatientAppointmentsRef =
     AutoDisposeFutureProviderRef<List<Appointment>>;
 String _$patientLifestyleAdviceHash() =>
-    r'c750c8ec9d2aa36f5c77c8dfa4a7d7619dd7fb4d';
+    r'ee8f817eca9523be881a08e7c7d5aae3a50be053';
 
 /// See also [patientLifestyleAdvice].
 @ProviderFor(patientLifestyleAdvice)
 final patientLifestyleAdviceProvider =
-    AutoDisposeFutureProvider<List<LifestyleAdvice>>.internal(
+    AutoDisposeFutureProvider<List<Prescription>>.internal(
       patientLifestyleAdvice,
       name: r'patientLifestyleAdviceProvider',
       debugGetCreateSourceHash:
@@ -250,8 +250,8 @@ final patientLifestyleAdviceProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef PatientLifestyleAdviceRef =
-    AutoDisposeFutureProviderRef<List<LifestyleAdvice>>;
-String _$scheduleActionHash() => r'efdc841608d1088b5807b3fb66b7a3de001dea20';
+    AutoDisposeFutureProviderRef<List<Prescription>>;
+String _$scheduleActionHash() => r'f44a5bd6d42997fb589ef81064de7499b99dc3b9';
 
 /// See also [ScheduleAction].
 @ProviderFor(ScheduleAction)

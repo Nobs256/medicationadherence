@@ -37,7 +37,15 @@ class NotificationController {
         $stmt->bindValue(2, (int)$perPage, PDO::PARAM_INT);
         $stmt->bindValue(3, (int)$offset, PDO::PARAM_INT);
         $stmt->execute();
-        Response::paginated($stmt->fetchAll(), $count, $page, $perPage);
+        $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Manually cast types to ensure correct JSON representation for clients.
+        foreach ($notifications as &$n) {
+            $n['id'] = (int)$n['id'];
+            $n['reference_id'] = $n['reference_id'] !== null ? (int)$n['reference_id'] : null;
+            $n['is_read'] = (bool)$n['is_read'];
+        }
+        Response::paginated($notifications, $count, $page, $perPage);
     }
 
     // POST /notifications/{id}/read

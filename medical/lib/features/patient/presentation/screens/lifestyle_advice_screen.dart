@@ -4,6 +4,7 @@ import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
 import '../../../../sharedwidgets/loading_shimmer.dart';
 import '../providers/patient_provider.dart';
+import '../../../doctor/domain/models/prescription.dart';
 import '../../../doctor/domain/models/lifestyle_advice.dart';
 
 class LifestyleAdviceScreen extends ConsumerWidget {
@@ -11,7 +12,7 @@ class LifestyleAdviceScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final adviceAsync = ref.watch(patientLifestyleAdviceProvider);
+    final prescriptionsAsync = ref.watch(patientLifestyleAdviceProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -20,35 +21,48 @@ class LifestyleAdviceScreen extends ConsumerWidget {
         backgroundColor: AppColors.background,
         elevation: 0,
       ),
-      body: adviceAsync.when(
-        data: (advice) {
-          if (advice.isEmpty) {
+      body: prescriptionsAsync.when(
+        data: (prescriptions) {
+          final prescriptionsWithAdvice =
+              prescriptions
+                  .where(
+                    (p) =>
+                        p.lifestyleAdvice != null &&
+                        p.lifestyleAdvice!.isNotEmpty,
+                  )
+                  .toList();
+
+          if (prescriptionsWithAdvice.isEmpty) {
             return const Center(child: Text('No active health tips.'));
           }
 
-          final Map<String, List<LifestyleAdvice>> grouped = {};
-          for (var item in advice) {
-            grouped.putIfAbsent(item.adviceType, () => []).add(item);
-          }
-
-          return ListView(
+          return ListView.separated(
             padding: const EdgeInsets.all(20),
-            children: grouped.entries.map((entry) {
+            itemCount: prescriptionsWithAdvice.length,
+            separatorBuilder: (_, __) => const Divider(height: 32),
+            itemBuilder: (context, index) {
+              final p = prescriptionsWithAdvice[index];
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12.0),
-                    child: Text(entry.key.toUpperCase(), style: AppTextStyles.label.copyWith(color: AppColors.primary, letterSpacing: 1.0)),
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: Text(
+                      'For Prescription: ${p.diagnosis}',
+                      style: AppTextStyles.h3.copyWith(fontSize: 16),
+                    ),
                   ),
-                  ...entry.value.map((item) => _AdviceCard(item: item)),
-                  const SizedBox(height: 12),
+                  ...p.lifestyleAdvice!.map((item) => _AdviceCard(item: item)),
                 ],
               );
-            }).toList(),
+            },
           );
         },
-        loading: () => const Padding(padding: EdgeInsets.all(20), child: LoadingShimmer()),
+        loading:
+            () => const Padding(
+              padding: EdgeInsets.all(20),
+              child: LoadingShimmer(),
+            ),
         error: (err, _) => Center(child: Text('Error: $err')),
       ),
     );
@@ -79,7 +93,10 @@ class _AdviceCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(item.title, style: AppTextStyles.h3.copyWith(fontSize: 16)),
+                  Text(
+                    item.title,
+                    style: AppTextStyles.h3.copyWith(fontSize: 16),
+                  ),
                   const SizedBox(height: 4),
                   Text(item.description, style: AppTextStyles.bodyMd),
                 ],
@@ -93,11 +110,16 @@ class _AdviceCard extends StatelessWidget {
 
   IconData _getIcon(String type) {
     switch (type) {
-      case 'exercise': return Icons.directions_run;
-      case 'diet': return Icons.restaurant;
-      case 'hydration': return Icons.water_drop;
-      case 'sleep': return Icons.bedtime;
-      default: return Icons.lightbulb_outline;
+      case 'exercise':
+        return Icons.directions_run;
+      case 'diet':
+        return Icons.restaurant;
+      case 'hydration':
+        return Icons.water_drop;
+      case 'sleep':
+        return Icons.bedtime;
+      default:
+        return Icons.lightbulb_outline;
     }
   }
 }

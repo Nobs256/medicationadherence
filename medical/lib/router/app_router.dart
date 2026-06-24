@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../features/appointments/presentation/screens/request_appointment_screen.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../features/auth/presentation/screens/splash_screen.dart';
 import '../features/patient/presentation/screens/patient_dashboard.dart';
@@ -25,12 +26,14 @@ import '../features/hospital_admin/presentation/screens/admin_dashboard.dart';
 import '../features/hospital_admin/presentation/screens/manage_doctors_screen.dart';
 import '../features/hospital_admin/presentation/screens/add_doctor_screen.dart';
 import '../features/hospital_admin/presentation/screens/manage_patients_screen.dart';
+import '../features/hospital_admin/presentation/screens/admin_doctor_detail_screen.dart';
 import '../features/hospital_admin/presentation/screens/add_patient_screen.dart';
 import '../features/hospital_admin/presentation/screens/assign_patient_screen.dart';
 import '../features/super_admin/presentation/screens/super_admin_dashboard.dart';
 import '../features/super_admin/presentation/screens/hospitals_list_screen.dart';
 import '../features/super_admin/presentation/screens/add_hospital_screen.dart';
 import '../features/super_admin/presentation/screens/hospital_detail_screen.dart';
+import '../features/super_admin/presentation/screens/manage_hospital_admins_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 
 final splashTimerProvider = FutureProvider<void>((ref) async {
@@ -111,6 +114,13 @@ final routerProvider = Provider<GoRouter>((ref) {
                 ),
           ),
           GoRoute(
+            path: '/super-admin/hospitals/:id/admins',
+            builder: (context, state) => ManageHospitalAdminsScreen(
+              hospitalId:
+                  int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+            ),
+          ),
+          GoRoute(
             path: '/admin/dashboard',
             builder: (context, state) => const AdminDashboard(),
           ),
@@ -121,6 +131,13 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/admin/doctors/add',
             builder: (context, state) => const AddDoctorScreen(),
+          ),
+          GoRoute(
+            path: '/admin/doctors/:id',
+            builder: (context, state) => AdminDoctorDetailScreen(
+              doctorId:
+                  int.tryParse(state.pathParameters['id'] ?? '') ?? 0,
+            ),
           ),
           GoRoute(
             path: '/admin/patients',
@@ -218,6 +235,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/profile',
             builder: (context, state) => const ProfileScreen(),
+          ),
+          GoRoute(
+            path: '/request-appointment',
+            builder: (context, state) => const RequestAppointmentScreen(),
           ),
         ],
       ),

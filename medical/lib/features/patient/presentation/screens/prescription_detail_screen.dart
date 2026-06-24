@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../core/constants/app_text_styles.dart';
+import '../../../doctor/domain/models/lifestyle_advice.dart';
 import '../providers/patient_provider.dart';
 
 class PrescriptionDetailScreen extends ConsumerWidget {
@@ -83,7 +84,7 @@ class PrescriptionDetailScreen extends ConsumerWidget {
     );
   }
 
-  Widget _adviceCard(dynamic a) {
+  Widget _adviceCard(LifestyleAdvice a) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       elevation: 0,

@@ -18,13 +18,19 @@ class UserController {
         $db         = Database::getInstance();
         $role       = sanitize(Request::get('role', ''));
         $hospitalId = (int)Request::get('hospital_id', $this->auth['hid'] ?? 0);
+        $includeInactive = Request::get('include_inactive');
         $doctorId   = Request::get('doctor_id');
         $page       = max(1, (int)Request::get('page', 1));
         $perPage    = 20;
         $offset     = paginationOffset($page, $perPage);
 
-        $conditions = ['u.is_active = 1'];
+        $conditions = [];
         $params     = [];
+
+        // By default, only show active users. Admins can request to include inactive ones.
+        if (!($includeInactive && in_array($this->auth['role'], ['hospital_admin', 'super_admin']))) {
+            $conditions[] = 'u.is_active = 1';
+        }
 
         if ($this->auth['role'] !== 'super_admin') {
             $conditions[] = 'u.hospital_id = ?';
@@ -36,9 +42,25 @@ class UserController {
 
         if ($role) { $conditions[] = 'r.name = ?'; $params[] = $role; }
 
-        if ($doctorId === 'me' || ($doctorId && $this->auth['role'] === 'doctor')) {
-            $conditions[] = 'EXISTS (SELECT 1 FROM doctor_patient_assignments dpa WHERE dpa.patient_id = u.id AND dpa.doctor_id = ? AND dpa.is_active = 1)';
-            $params[]     = $this->auth['uid'];
+        // if ($doctorId === 'me' || ($doctorId && $this->auth['role'] === 'doctor')) {
+        //     $conditions[] = 'EXISTS (SELECT 1 FROM doctor_patient_assignments dpa WHERE dpa.patient_id = u.id AND dpa.doctor_id = ? AND dpa.is_active = 1)';
+        //     $params[]     = $this->auth['uid'];
+        // }
+
+        if ($doctorId) {
+            $idToUse = 0;
+            // A doctor viewing their own patients
+            if ($doctorId === 'me' && $this->auth['role'] === 'doctor') {
+                $idToUse = $this->auth['uid'];
+            } // An admin viewing a specific doctor's patients
+            elseif (is_numeric($doctorId) && in_array($this->auth['role'], ['hospital_admin', 'super_admin'])) {
+                $idToUse = (int)$doctorId;
+            }
+
+            if ($idToUse > 0) {
+                $conditions[] = 'EXISTS (SELECT 1 FROM doctor_patient_assignments dpa WHERE dpa.patient_id = u.id AND dpa.doctor_id = ? AND dpa.is_active = 1)';
+                $params[]     = $idToUse;
+            }
         }
 
         $where = 'WHERE ' . implode(' AND ', $conditions);

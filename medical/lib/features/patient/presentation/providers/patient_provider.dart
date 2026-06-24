@@ -55,20 +55,12 @@ Future<List<Appointment>> patientAppointments(PatientAppointmentsRef ref) async 
 }
 
 @riverpod
-Future<List<LifestyleAdvice>> patientLifestyleAdvice(PatientLifestyleAdviceRef ref) async {
+Future<List<Prescription>> patientLifestyleAdvice(
+    PatientLifestyleAdviceRef ref) async {
   final prescriptions = await ref.watch(myPrescriptionsProvider.future);
-  final activePrescriptions = prescriptions.where((p) => p.isActive).toList();
-
-  List<LifestyleAdvice> allAdvice = [];
-  for (final p in activePrescriptions) {
-    try {
-      final detail = await ref.watch(prescriptionDetailProvider(p.id).future);
-      if (detail.lifestyleAdvice != null) {
-        allAdvice.addAll(detail.lifestyleAdvice!);
-      }
-    } catch (_) {}
-  }
-  return allAdvice;
+  // The `myPrescriptionsProvider` now fetches prescriptions with advice included.
+  // We just filter for active ones.
+  return prescriptions.where((p) => p.isActive).toList();
 }
 
 @riverpod
@@ -82,6 +74,6 @@ class ScheduleAction extends _$ScheduleAction {
       final api = ref.read(apiServiceProvider);
       await api.post('/schedules/$id/take');
       ref.invalidate(todaySchedulesProvider);
-    });
+    });;
   }
 }

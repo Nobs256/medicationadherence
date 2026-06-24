@@ -4,9 +4,18 @@ import 'package:go_router/go_router.dart';
 import '../core/constants/app_colors.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 
-class AppShell extends ConsumerWidget {
-  static DateTime? _lastBackPressed;
+class AppShell extends ConsumerStatefulWidget {
+  final Widget child;
+  const AppShell({super.key, required this.child});
 
+  @override
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
+
+class _AppShellState extends ConsumerState<AppShell> {
+  DateTime? _lastBackPressed;
+
+  // This logic determines the primary dashboard route for a given user role.
   String _dashboardRouteForRole(String role) {
     switch (role) {
       case 'patient':
@@ -22,14 +31,10 @@ class AppShell extends ConsumerWidget {
     }
   }
 
-  final Widget child;
-  const AppShell({super.key, required this.child});
-
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final user = ref.watch(authStateProvider).value;
-    if (user == null) return child;
+    if (user == null) return widget.child;
 
     final role = user.roleName;
     final tabs = _getTabsForRole(role);
@@ -45,16 +50,16 @@ class AppShell extends ConsumerWidget {
         // If user is on dashboard -> double-tap to exit.
         if (location.startsWith(dashboardRoute)) {
           final now = DateTime.now();
-          final last = _lastBackPressed;
-          _lastBackPressed = now;
-          if (last != null && now.difference(last) <= const Duration(seconds: 2)) {
+          if (_lastBackPressed != null &&
+              now.difference(_lastBackPressed!) <= const Duration(seconds: 2)) {
             // let system handle exit
             return true;
           }
+          _lastBackPressed = now;
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Press back again to exit')),
           );
-          return false;
+          return false; // Prevent exit on first press
         }
 
         // If not on dashboard -> go to dashboard.
@@ -62,26 +67,28 @@ class AppShell extends ConsumerWidget {
         return false;
       },
       child: Scaffold(
-        body: child,
+        body: widget.child,
         bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        currentIndex: _calculateSelectedIndex(context, tabs),
-        onTap: (index) => context.go(tabs[index].route),
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textMuted,
-        items:
-            tabs
-                .map(
-                  (tab) => BottomNavigationBarItem(
-                    icon: Icon(tab.icon),
-                    label: tab.label,
-                  ),
-                )
-                .toList(),
+          type: BottomNavigationBarType.fixed,
+          currentIndex: _calculateSelectedIndex(context, tabs),
+          onTap: (index) => context.go(tabs[index].route),
+          selectedItemColor: AppColors.primary,
+          unselectedItemColor: AppColors.textMuted,
+          items:
+              tabs
+                  .map(
+                    (tab) => BottomNavigationBarItem(
+                      icon: Icon(tab.icon),
+                      label: tab.label,
+                    ),
+                  )
+                  .toList(),
+        ),
       ),
-    ));
+    );
   }
 
+  // Calculates the selected tab index based on the current route.
   int _calculateSelectedIndex(BuildContext context, List<NavTab> tabs) {
     final String location = GoRouterState.of(context).matchedLocation;
     for (int i = 0; i < tabs.length; i++) {
@@ -92,6 +99,7 @@ class AppShell extends ConsumerWidget {
     return 0;
   }
 
+  // Returns the list of navigation tabs for the bottom bar based on user role.
   List<NavTab> _getTabsForRole(String role) {
     switch (role) {
       case 'patient':
@@ -112,7 +120,7 @@ class AppShell extends ConsumerWidget {
             route: '/patient/appointments',
           ),
           const NavTab(
-            label: 'Life Style',
+            label: 'Lifestyle',
             icon: Icons.bar_chart_rounded,
             route: '/patient/lifestyle',
           ),
